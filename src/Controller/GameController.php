@@ -4,6 +4,6 @@ class GameController
 {
     public function __construct()
     {
-        $game = new GameView();
+        new GameView();
     }
 }

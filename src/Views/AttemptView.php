@@ -10,10 +10,11 @@ class AttemptView
      */
     public function __construct(Game $game)
     {
-        $userCombination = readline(' Introduce combinación: ');
+        $userCombination = readline(' --> Introduce combinación: ');
         $game->play($userCombination);
         echo ' ' . $game->getAttemptNumber() . '. ' . $userCombination;
         echo ' Black: ' . $game->getLastResult()->getBlack();
         echo ' White: ' . $game->getLastResult()->getWhite();
+        echo PHP_EOL;
     }
 }

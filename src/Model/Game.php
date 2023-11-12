@@ -1,5 +1,6 @@
 <?php
 
+use Level\LevelInterface;
 include_once('ProposedCombination.php');
 include_once('SecretCombination.php');
 include_once('InvalidCombinationError.php');
@@ -7,21 +8,30 @@ include_once('Result.php');
 
 class Game
 {
-    const MAX_ATTEMPTS = 10;
-
     private int $attemptNumber = 0;
+    private LevelInterface $difficulty;
     private array $proposedCombinations;
     private SecretCombination $secretCombination;
     private ?Result $lastResult = null;
 
-    public function __construct()
+    /**
+     * @throws InvalidCombinationError
+     */
+    public function __construct(?LevelInterface $difficulty)
     {
+        if (!$difficulty) {
+            $difficulty = new Difficulty();
+        }
+        $this->difficulty = $difficulty;
         $this->init();
     }
 
+    /**
+     * @throws InvalidCombinationError
+     */
     public function init()
     {
-        $this->secretCombination = new SecretCombination();
+        $this->secretCombination = new SecretCombination($this->difficulty);
         $this->attemptNumber = 0;
     }
 
@@ -31,7 +41,7 @@ class Game
     public function play(string $input)
     {
         $combination = str_split($input);
-        $proposedCombination = new ProposedCombination($combination);
+        $proposedCombination = new ProposedCombination($this->difficulty, $combination);
         $this->proposedCombinations[] = $proposedCombination;
         $this->attemptNumber++;
         $this->lastResult = new Result($proposedCombination, $this->secretCombination);
@@ -61,17 +71,18 @@ class Game
           return false;
       }
 
-      return $this->lastResult->getWhite() < $this->secretCombination->getWidth();
+      return $this->lastResult->getWhite() < $this->secretCombination->getDifficulty()->getWidth();
     }
 
     public function isWinner(): bool
     {
-        return $this->lastResult && $this->lastResult->getWhite() === $this->secretCombination->getWidth() &&
+        return $this->lastResult &&
+            $this->lastResult->getWhite() === $this->secretCombination->getDifficulty()->getWidth() &&
             $this->lastResult->getValuesProposed() === $this->secretCombination->getValues();
     }
 
     public function isFinished(): bool
     {
-        return !($this->attemptNumber < self::MAX_ATTEMPTS) || $this->isWinner();
+        return !($this->attemptNumber < $this->difficulty->getMaxAttempts()) || $this->isWinner();
     }
 }

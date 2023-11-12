@@ -18,6 +18,11 @@ class Result
     private int $black = 0;
     private array $valuesProposed;
 
+    /**
+     * TODO Secret YYYPP returns 3 black 2 white for GGYYP combination
+     * @param ProposedCombination $proposedCombination
+     * @param SecretCombination $secretCombination
+     */
     public function __construct(ProposedCombination $proposedCombination, SecretCombination $secretCombination)
     {
         $valuesProposed = $proposedCombination->getValues();

@@ -1,25 +1,19 @@
 <?php
 
+use Level\LevelInterface;
+
 include_once('InvalidCombinationError.php');
 
-class Combination
+abstract class Combination
 {
-    private int $width = 4;
     private array $values;
+    private LevelInterface $difficulty;
 
     /**
      * @throws InvalidCombinationError
      */
     public function __construct(array $values) {
         $this->setValues($values);
-    }
-
-    /**
-     * @return int
-     */
-    public function getWidth(): int
-    {
-        return $this->width;
     }
 
     /**
@@ -31,20 +25,12 @@ class Combination
     }
 
     /**
-     * @param int $width
-     */
-    public function setWidth(int $width): void
-    {
-        $this->width = $width;
-    }
-
-    /**
      * @throws InvalidCombinationError
      */
     public function setValues(array $values): void
     {
-        if (count($values) !== $this->getWidth()) {
-            throw new InvalidCombinationError('Invalid length');
+        if (count($values) !== $this->getDifficulty()->getWidth()) {
+            throw new InvalidCombinationError('Longitud inválida.');
         }
 
         $types = new Type();
@@ -55,5 +41,15 @@ class Combination
         }
 
         $this->values = $values;
+    }
+
+    public function getDifficulty(): LevelInterface
+    {
+        return $this->difficulty;
+    }
+
+    public function setDifficulty(LevelInterface $difficulty): void
+    {
+        $this->difficulty = $difficulty;
     }
 }

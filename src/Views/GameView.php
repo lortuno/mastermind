@@ -2,11 +2,15 @@
 
 include_once('ErrorView.php');
 include_once('AttemptView.php');
+include_once('DifficultyView.php');
 
 class GameView
 {
     private Game $game;
 
+    /**
+     * @throws InvalidCombinationError
+     */
     public function __construct()
     {
         $this->play();
@@ -14,10 +18,14 @@ class GameView
         $this->resumeGame();
     }
 
+    /**
+     * @throws InvalidCombinationError
+     */
     protected function play(): void
     {
         echo ' <--MASTER MIND--> ' . PHP_EOL;
-        $this->game = new Game();
+        $difficultyView = new DifficultyView();
+        $this->game = new Game($difficultyView->getDifficulty());
         $this->makeAttempt();
     }
 

@@ -14,6 +14,6 @@ class InvalidCombinationError extends Exception
 
     public function getErrorMessage(): string
     {
-        return 'Invalid value';
+        return 'Valor inválido.';
     }
 }
