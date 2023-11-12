@@ -19,7 +19,6 @@ class Result
     private array $valuesProposed;
 
     /**
-     * TODO Secret YYYPP returns 3 black 2 white for GGYYP combination
      * @param ProposedCombination $proposedCombination
      * @param SecretCombination $secretCombination
      */

@@ -15,7 +15,7 @@ class ResultTest extends TestCase
 {
     /**
      * @throws InvalidCombinationError
-     * @covers Result
+     * @covers ::publicMethod
      */
     public function testResultHardOk()
     {
@@ -29,7 +29,7 @@ class ResultTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers Result
+     * @covers ::publicMethod
      */
     public function testResultMediumOK()
     {
@@ -43,7 +43,7 @@ class ResultTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers Result
+     * @covers ::publicMethod
      */
     public function testResultEasyOK()
     {
@@ -57,7 +57,20 @@ class ResultTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers Result
+     * @covers ::publicMethod
+     */
+    public function testGetProposedValuesOK()
+    {
+        $difficulty = new Easy();
+        $combination = new ProposedCombination($difficulty, ['P', 'G', 'Y']);
+        $secret = new ProposedCombination($difficulty, ['Y', 'Y', 'P']);
+        $result = new Result($combination, $secret);
+        $this->assertIsArray($result->getValuesProposed());
+    }
+
+    /**
+     * @throws InvalidCombinationError
+     * @covers ::publicMethod
      */
     public function testResultInvalidOK()
     {

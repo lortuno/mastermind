@@ -29,3 +29,8 @@ or filter just one file
 ```
 vendor/bin/phpunit --filter ResultTest
 ```
+
+To generate the Coverage report: 
+```
+ vendor/bin/phpunit --coverage-html tests/report
+```

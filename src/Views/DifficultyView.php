@@ -15,15 +15,15 @@ class DifficultyView
         $this->difficulty = $this->getDifficultyLevel($difficulty);
     }
 
-    private function promptDifficulty()
+    private function promptDifficulty(): int
     {
-        return readline(' Introduce nivel dificultad: 1 (fácil) - 2 (normal) - 3 (difícil): ');
+        return (int) readline('Introduce nivel dificultad: 1 (fácil) - 2 (normal) - 3 (difícil): ');
     }
 
     /**
      * @throws InvalidCombinationError
      */
-    public function getDifficultyLevel($difficulty): LevelInterface
+    public function getDifficultyLevel(int $difficulty): LevelInterface
     {
         try {
             $difficultyLevel = new Difficulty($difficulty);

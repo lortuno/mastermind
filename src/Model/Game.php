@@ -17,7 +17,7 @@ class Game
     /**
      * @throws InvalidCombinationError
      */
-    public function __construct(?LevelInterface $difficulty)
+    public function __construct(?LevelInterface $difficulty = null)
     {
         if (!$difficulty) {
             $difficulty = new Difficulty();
@@ -47,7 +47,7 @@ class Game
         $this->lastResult = new Result($proposedCombination, $this->secretCombination);
     }
 
-    public function getLastResult(): Result
+    public function getLastResult(): ?Result
     {
         return $this->lastResult;
     }

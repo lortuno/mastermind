@@ -21,12 +21,12 @@ class Difficulty extends BaseLevel
     /**
      * @throws InvalidCombinationError
      */
-    public function __construct($difficulty = 2)
+    public function __construct(int $difficulty = 2)
     {
         $this->setDifficultyLevel($difficulty);
     }
 
-    public function setDifficultyLevel($difficulty)
+    public function setDifficultyLevel(int $difficulty)
     {
         switch ($difficulty) {
             case 1:

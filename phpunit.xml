@@ -19,9 +19,17 @@
     </testsuites>
 
     <coverage cacheDirectory=".phpunit.cache/code-coverage"
-              processUncoveredFiles="true">
+              processUncoveredFiles="true"
+              forceCoversAnnotation="false"
+              beStrictAboutCoversAnnotation="false"
+              beStrictAboutOutputDuringTests="false"
+              beStrictAboutTodoAnnotatedTests="false"
+    >
         <include>
             <directory suffix=".php">src</directory>
         </include>
+        <exclude>
+            <file>src/index.php</file>
+        </exclude>
     </coverage>
 </phpunit>
