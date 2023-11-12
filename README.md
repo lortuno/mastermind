@@ -1,6 +1,6 @@
 # MASTERMIND
 
-Mastermind is a game with n position (default 4) of several colors and you have to guess the secret combination,
+Mastermind is a game with n position (default 4) of several colors, and you have to guess the secret combination
 in less than 10 attempts (depending on difficulty).
 In this project at the moment the valid colors are:
 - R

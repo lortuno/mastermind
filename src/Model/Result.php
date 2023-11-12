@@ -32,22 +32,11 @@ class Result
 
         foreach ($valuesProposed as $key => $value) {
             if (in_array($value, $secretValues)) {
-                if ($secretValues[$key] === $value) {
-                    unset($unmatchedValues[$key]);
-                    $this->white++;
-                }
-
-                // todo fix blacks
-            }
-        }
-
-        foreach ($valuesProposed as $value) {
-            foreach ($unmatchedValues as $k => $v) {
-                if ($value === $v) {
-                    unset($unmatchedValues[$k]);
+                unset($unmatchedValues[$key]);
+                ($secretValues[$key] === $value) ?
+                    $this->white++
+                    :
                     $this->black++;
-                    break;
-                }
             }
         }
     }
