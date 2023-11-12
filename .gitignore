@@ -1,0 +1,15 @@
+# Cache, session files and logs (Symfony3)
+/var/cache/*
+/var/logs/*
+
+# Managed by Composer
+/bin/*
+!bin/console
+!bin/symfony_requirements
+/vendor/
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+/.phpunit.cache/test-results
+###< phpunit/phpunit ###

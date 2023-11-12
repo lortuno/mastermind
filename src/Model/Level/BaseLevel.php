@@ -2,6 +2,8 @@
 
 namespace Level;
 
+include_once ('LevelInterface.php');
+
 abstract class BaseLevel implements LevelInterface
 {
     protected string $name = '';

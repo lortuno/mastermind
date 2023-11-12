@@ -23,7 +23,7 @@ class Result
      * @param ProposedCombination $proposedCombination
      * @param SecretCombination $secretCombination
      */
-    public function __construct(ProposedCombination $proposedCombination, SecretCombination $secretCombination)
+    public function __construct(ProposedCombination $proposedCombination, Combination $secretCombination)
     {
         $valuesProposed = $proposedCombination->getValues();
         $this->valuesProposed = $valuesProposed;
