@@ -2,6 +2,8 @@
 /var/cache/*
 /var/logs/*
 
+.idea
+
 # Managed by Composer
 /bin/*
 !bin/console

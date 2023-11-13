@@ -1,0 +1,32 @@
+version: '1.0'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - ./src:/var/www/html
+    links:
+      - php-fpm
+    networks:
+      local-net:
+        aliases:
+          - web.local
+          - localhost
+  php-fpm:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./:/var/www/html
+    networks:
+      local-net:
+        aliases:
+          - web.local
+          - localhost
+
+networks:
+  local-net:
+    driver: bridge
