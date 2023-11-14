@@ -15,7 +15,6 @@ class ResultTest extends TestCase
 {
     /**
      * @throws InvalidCombinationError
-     * @covers ::publicMethod
      */
     public function testResultHardOk()
     {
@@ -29,7 +28,6 @@ class ResultTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers ::publicMethod
      */
     public function testResultMediumOK()
     {
@@ -43,7 +41,6 @@ class ResultTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers ::publicMethod
      */
     public function testResultEasyOK()
     {
@@ -57,7 +54,6 @@ class ResultTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers ::publicMethod
      */
     public function testGetProposedValuesOK()
     {
@@ -70,7 +66,6 @@ class ResultTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers ::publicMethod
      */
     public function testResultInvalidOK()
     {

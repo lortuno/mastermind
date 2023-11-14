@@ -15,7 +15,6 @@ class SecretCombinationTest extends TestCase
 {
     /**
      * @throws InvalidCombinationError
-     * @covers SecretCombination, Hard
      */
     public function testGenerateSecretOk()
     {

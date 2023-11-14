@@ -30,13 +30,13 @@ RUN echo '[PHP]\ndate.timezone = "Europe/Berlin"\n' > /usr/local/etc/php/conf.d/
 RUN echo 'memory_limit = 1G' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 RUN composer self-update --2;
 
-# copy and run entrypoint sh
+# setuo xdebug
 
 RUN apk add --update --no-cache linux-headers
 
-#RUN apk add --no-cache $PHPIZE_DEPS \
-#    && pecl install xdebug \
-#    && docker-php-ext-enable xdebug
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug
 
 
 ADD docker/xdebug.ini /usr/local/etc/php/conf.d/

@@ -11,7 +11,6 @@ class GameTest extends TestCase
 {
     /**
      * @throws InvalidCombinationError
-     * @covers Game, Combination, \Level\BaseLevel, Type
      */
     public function testCreateGameOk()
     {
@@ -27,7 +26,6 @@ class GameTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers Game, Combination, \Level\BaseLevel, Type
      */
     public function testPlayOK()
     {
@@ -39,7 +37,6 @@ class GameTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers Game, Combination, Result, Type
      */
     public function testIsLoser()
     {
@@ -60,7 +57,6 @@ class GameTest extends TestCase
 
     /**
      * @throws InvalidCombinationError
-     * @covers Game, Combination, \Level\BaseLevel, Type
      */
     public function testPlayKO()
     {

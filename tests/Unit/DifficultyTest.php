@@ -14,7 +14,6 @@ include_once 'src/Model/Level/LevelInterface.php';
 class DifficultyTest extends TestCase
 {
     /**
-     * @covers Difficulty, Hard
      * @throws InvalidCombinationError
      */
     public function testDifficultyHardOk()
@@ -25,7 +24,6 @@ class DifficultyTest extends TestCase
     }
 
     /**
-     * @covers Difficulty, Medium
      */
     public function testDifficultyDefaultOk()
     {
@@ -35,7 +33,6 @@ class DifficultyTest extends TestCase
     }
 
     /**
-     * @covers Difficulty, Medium
      */
     public function testDifficultyEasyOk()
     {
@@ -45,7 +42,6 @@ class DifficultyTest extends TestCase
     }
 
     /**
-     * @covers Difficulty, Medium
      */
     public function testDifficultyError()
     {
