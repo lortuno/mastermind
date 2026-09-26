@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace App\Controller\Model;
 
-use Combination;
-use App\Model\Level\LevelInterface;
+use App\Controller\Model\Level\LevelInterface;
 
 include_once('Combination.php');
 

@@ -1,8 +1,8 @@
 <?php
 
-use App\Model\InvalidCombinationError;
-use App\Model\Type;
-use App\Model\Level\LevelInterface;
+namespace App\Controller\Model;
+
+use App\Controller\Model\Level\LevelInterface;
 
 include_once('InvalidCombinationError.php');
 
@@ -14,7 +14,8 @@ abstract class Combination
     /**
      * @throws InvalidCombinationError
      */
-    public function __construct(array $values) {
+    public function __construct(array $values)
+    {
         $this->setValues($values);
     }
 

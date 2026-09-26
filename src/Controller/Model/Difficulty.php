@@ -1,23 +1,24 @@
 <?php
 
-use App\Model\InvalidCombinationError;
-use App\Model\Level\Easy;
-use App\Model\Level\Medium;
-use App\Model\Level\Hard;
-use App\Model\Level\BaseLevel;
-use App\Model\Level\LevelInterface;
+namespace App\Controller\Model;
 
-include_once ('Level/LevelInterface.php');
-include_once ('Level/Easy.php');
-include_once ('Level/Medium.php');
-include_once ('Level/Hard.php');
+use App\Controller\Model\Level\BaseLevel;
+use App\Controller\Model\Level\Easy;
+use App\Controller\Model\Level\Hard;
+use App\Controller\Model\Level\LevelInterface;
+use App\Controller\Model\Level\Medium;
+
+include_once('Level/LevelInterface.php');
+include_once('Level/Easy.php');
+include_once('Level/Medium.php');
+include_once('Level/Hard.php');
 
 class Difficulty extends BaseLevel
 {
     /**
      * @var Easy|Hard|Medium
      */
-    private LevelInterface $difficulty;
+    private Medium|Hard|Easy $difficulty;
 
     /**
      * @throws InvalidCombinationError
@@ -27,7 +28,7 @@ class Difficulty extends BaseLevel
         $this->setDifficultyLevel($difficulty);
     }
 
-    public function setDifficultyLevel(int $difficulty)
+    public function setDifficultyLevel(int $difficulty): void
     {
         switch ($difficulty) {
             case 1:

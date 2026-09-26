@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Views\Console;
-use Game;
+use App\Controller\Model\Game;
 
 class EndGameView
 {

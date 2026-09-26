@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace App\Controller\Model;
 use Exception;
+use Throwable;
 
 class InvalidCombinationError extends Exception
 {

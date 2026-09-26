@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Level;
+namespace App\Controller\Model\Level;
 
 interface LevelInterface
 {

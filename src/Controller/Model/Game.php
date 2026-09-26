@@ -1,10 +1,9 @@
 <?php
 
-use App\Model\InvalidCombinationError;
-use App\Model\ProposedCombination;
-use App\Model\Result;
-use App\Model\SecretCombination;
-use App\Model\Level\LevelInterface;
+namespace App\Controller\Model;
+
+use App\Controller\Model\Level\LevelInterface;
+
 include_once('ProposedCombination.php');
 include_once('SecretCombination.php');
 include_once('InvalidCombinationError.php');
@@ -33,7 +32,7 @@ class Game
     /**
      * @throws InvalidCombinationError
      */
-    public function init()
+    public function init(): void
     {
         $this->secretCombination = new SecretCombination($this->difficulty);
         $this->attemptNumber = 0;
@@ -71,11 +70,11 @@ class Game
 
     public function isLoser(): bool
     {
-      if (!$this->isFinished()) {
-          return false;
-      }
+        if (!$this->isFinished()) {
+            return false;
+        }
 
-      return $this->lastResult->getWhite() < $this->secretCombination->getDifficulty()->getWidth();
+        return $this->lastResult->getWhite() < $this->secretCombination->getDifficulty()->getWidth();
     }
 
     public function isWinner(): bool

@@ -1,10 +1,11 @@
 <?php
 
-use App\Model\InvalidCombinationError;
-use App\Model\Result;
-use App\Model\SecretCombination;
+use App\Controller\Model\Game;
+use App\Controller\Model\InvalidCombinationError;
+use App\Controller\Model\Level\Easy;
+use App\Controller\Model\Result;
+use App\Controller\Model\SecretCombination;
 use PHPUnit\Framework\TestCase;
-use App\Model\Level\Easy;
 
 include_once 'src/Model/Result.php';
 include_once 'src/Model/Level/Easy.php';

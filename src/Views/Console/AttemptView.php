@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Views\Console;
-use Game;
-use App\Model\InvalidCombinationError;
+use App\Controller\Model\Game;
+use App\Controller\Model\InvalidCombinationError;
 
 include_once('ErrorView.php');
 include_once('EndGameView.php');
