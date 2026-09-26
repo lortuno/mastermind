@@ -21,6 +21,35 @@ class GameApiController
     }
 
     /**
+     * Dispatches a single API request to the matching action. Pure
+     * request-in/response-out (method, action, decoded body in; HTTP status
+     * + response body out) so it can be unit tested without a real HTTP
+     * request or a live PHP session.
+     *
+     * @return array{status: int, body: array}
+     */
+    public function handle(string $method, string $action, array $payload): array
+    {
+        try {
+            $body = match (true) {
+                $method === 'GET' && $action === 'difficulties' => $this->difficulties(),
+                $method === 'GET' && $action === 'state' => $this->state(),
+                $method === 'POST' && $action === 'start' => $this->start((int)($payload['difficulty'] ?? 0)),
+                $method === 'POST' && $action === 'guess' => $this->guess((string)($payload['combination'] ?? '')),
+                default => null,
+            };
+        } catch (InvalidCombinationError $error) {
+            return ['status' => 400, 'body' => ['error' => $error->getMessage()]];
+        }
+
+        if ($body === null) {
+            return ['status' => 404, 'body' => ['error' => 'Unknown action.']];
+        }
+
+        return ['status' => 200, 'body' => $body];
+    }
+
+    /**
      * @throws InvalidCombinationError
      */
     public function difficulties(): array

@@ -1,4 +1,4 @@
-const BASE_URL = '/api.php';
+const BASE_URL = '/index.php';
 
 async function request(action, { method = 'GET', body } = {}) {
   const response = await fetch(`${BASE_URL}?action=${action}`, {

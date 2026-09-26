@@ -148,4 +148,61 @@ class GameApiControllerTest extends TestCase
         $this->assertFalse($state['isLoser']);
         $this->assertSame($secretValues, $state['secretCombination']);
     }
+
+    public function testHandleDispatchesGetDifficulties()
+    {
+        $session = [];
+        $controller = new GameApiController($session);
+
+        $result = $controller->handle('GET', 'difficulties', []);
+
+        $this->assertSame(200, $result['status']);
+        $this->assertCount(3, $result['body']['difficulties']);
+    }
+
+    public function testHandleDispatchesPostStartAndPostGuess()
+    {
+        $session = [];
+        $controller = new GameApiController($session);
+
+        $started = $controller->handle('POST', 'start', ['difficulty' => 2]);
+        $this->assertSame(200, $started['status']);
+        $this->assertSame(4, $started['body']['width']);
+
+        $guessed = $controller->handle('POST', 'guess', ['combination' => 'RGBY']);
+        $this->assertSame(200, $guessed['status']);
+        $this->assertSame(1, $guessed['body']['attemptNumber']);
+    }
+
+    public function testHandleMapsInvalidCombinationErrorTo400()
+    {
+        $session = [];
+        $controller = new GameApiController($session);
+
+        $result = $controller->handle('POST', 'guess', ['combination' => 'RGBY']);
+
+        $this->assertSame(400, $result['status']);
+        $this->assertArrayHasKey('error', $result['body']);
+    }
+
+    public function testHandleReturns404ForUnknownAction()
+    {
+        $session = [];
+        $controller = new GameApiController($session);
+
+        $result = $controller->handle('GET', 'unknown', []);
+
+        $this->assertSame(404, $result['status']);
+        $this->assertArrayHasKey('error', $result['body']);
+    }
+
+    public function testHandleReturns404ForKnownActionWithWrongMethod()
+    {
+        $session = [];
+        $controller = new GameApiController($session);
+
+        $result = $controller->handle('POST', 'difficulties', []);
+
+        $this->assertSame(404, $result['status']);
+    }
 }

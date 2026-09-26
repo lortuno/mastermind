@@ -302,12 +302,18 @@ body {
       display: inline-block;
     }
 
-    &--black::before {
+    // "White" (right color, right position) is the strong signal, so it
+    // gets a solid, high-contrast fill against the dark page background.
+    &--white::before {
       background: #f4f5f7;
+      border: 1px solid rgba(0, 0, 0, 0.35);
     }
 
-    &--white::before {
-      background: transparent;
+    // "Black" (right color, wrong position) still needs to read against
+    // the dark surface, so it's a dark fill with a visible light ring
+    // rather than blending into the background.
+    &--black::before {
+      background: #12151c;
       border: 1px solid $color-text-muted;
     }
   }

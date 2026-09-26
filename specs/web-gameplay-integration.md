@@ -19,13 +19,13 @@ validation, or difficulty rules are reimplemented in JavaScript.
 
 1. WHEN the page loads AND no game is in progress THEN the player sees a
    difficulty selection screen listing every difficulty (name, board
-   width, max attempts) as reported by `GET /api.php?action=difficulties`.
+   width, max attempts) as reported by `GET /index.php?action=difficulties`.
 2. WHEN the player selects a difficulty THEN the frontend calls
-   `POST /api.php?action=start` with that level, the backend starts a new
+   `POST /index.php?action=start` with that level, the backend starts a new
    `Game` with the matching `Difficulty`, and the frontend renders an
    empty guess board sized to that difficulty's width (3, 4, or 5).
 3. WHEN the player submits a complete guess THEN the frontend calls
-   `POST /api.php?action=guess`, the backend scores it via the existing
+   `POST /index.php?action=guess`, the backend scores it via the existing
    `Game`/`Result` classes, and the response's black and white counts are
    appended to a visible, ordered attempt log (most recent last).
 4. WHEN the backend rejects a guess as structurally invalid (wrong length
@@ -42,8 +42,8 @@ validation, or difficulty rules are reimplemented in JavaScript.
 7. WHEN the game is won or lost THEN the player can start a new game,
    returning to difficulty selection.
 8. WHEN the browser reloads while a game is in progress or just finished
-   THEN `GET /api.php?action=state` restores it (board width, attempt log,
-   win/loss state) from the server-side session instead of losing
+   THEN `GET /index.php?action=state` restores it (board width, attempt
+   log, win/loss state) from the server-side session instead of losing
    progress.
 9. All scoring, win/loss determination, attempt counting, and difficulty
    parameters are computed exclusively by the existing `App\Model\*`
@@ -100,15 +100,23 @@ validation, or difficulty rules are reimplemented in JavaScript.
     `Combination`) and only includes `secretCombination` in the response
     once `$game->isFinished()` is true — the secret is never exposed
     mid-game.
-- **New front controller**: `public/api.php`. Calls `session_start()`,
-  dispatches on `($_SERVER['REQUEST_METHOD'], $_GET['action'])` to the
-  matching `GameApiController` method, JSON-decodes the request body for
-  POSTs, and catches `InvalidCombinationError` to emit
-  `HTTP 400 {"error": "..."}`. Lives under the existing `public/` docroot
-  ([[web-guess-picker]] already made `public/` the nginx root), so no
-  nginx/docker changes are needed — `api.php` matches the existing
-  `location ~ \.php$` block.
-- **API contract**:
+  - `handle(string $method, string $action, array $payload): array{status:
+    int, body: array}` — the entire request dispatch (method+action
+    routing, JSON body → action arguments, `InvalidCombinationError` → 400,
+    unknown action/method combo → 404) lives here as a pure function with
+    no superglobals and no I/O, so it's unit-tested directly (see
+    `GameApiControllerTest::testHandle*`) without a real HTTP request.
+- **`public/` holds only `index.php`**: no separate `api.php` — the API
+  router previously lived in `public/`, which put untestable dispatch
+  logic outside `src/`. It's now the `handle()` method above (fully
+  testable, lives in `src/Controller/`), and `public/index.php` is a thin
+  ~15-line bootstrap: no `$_GET['action']` → render the SPA via
+  `GameWebController` (unchanged); otherwise `session_start()`, decode the
+  JSON body, call `GameApiController::handle()`, and emit its `status`/
+  `body` as JSON. Both the SPA and the API are reached through
+  `GET/POST /index.php` (with or without `?action=`), so no nginx/docker
+  changes are needed beyond what [[web-guess-picker]] already set up.
+- **API contract**: every action goes through `/index.php?action=...`.
 
   | Action | Method | Request body | Response (200) |
   |---|---|---|---|
@@ -121,7 +129,8 @@ validation, or difficulty rules are reimplemented in JavaScript.
   isFinished, isWinner, isLoser, history: [{attempt, combination, black,
   white}], secretCombination?: string[]}` (`secretCombination` present
   only when `isFinished`). Errors: any action can respond `HTTP 400
-  {error: string}` (invalid input, invalid difficulty, or no active game).
+  {error: string}` (invalid input, invalid difficulty, or no active game),
+  or `HTTP 404 {error: string}` for an unrecognized action/method pair.
 - **Session-based persistence**: PHP's built-in session mechanism
   (file-backed by default) stores the serialized `Game` plus the parallel
   attempt-history array. `Game`/`Combination`/`Result` hold no resources,
@@ -141,6 +150,19 @@ validation, or difficulty rules are reimplemented in JavaScript.
   "Play again"). `GuessHistory` is extended to show each attempt's
   black/white counts, not just its pegs. Guess/API failures render in an
   `role="alert"` notice (Requirement 4).
+- **Black/white indicator contrast**: the per-attempt score in
+  `GuessHistory` shows a small dot before each count, in addition to the
+  explicit "right position" / "right color, wrong position" text (the
+  text alone already satisfies non-color-dependent identification). On
+  this dark-themed page, a literal black-fill dot for the "black" score
+  and a hollow/transparent one for "white" — the first pass — read as
+  backwards and low-contrast: the "white" (exact-match) dot was
+  transparent and blended into the dark background, and the "black" dot
+  was rendered near-white. Fixed in `web/src/styles/main.scss`:
+  `--white` is now a solid light fill with a dark border (pops against
+  the dark surface, and its color literally reads as "white"); `--black`
+  is a solid dark fill with a visible light-gray ring so it stays legible
+  against the surface instead of disappearing into it.
 - **Reuse discipline**: `src/Model/*` is not modified by this feature —
   every rule (color validity, combination length, scoring, win/loss,
   attempt limits) is read through existing public methods.
@@ -164,3 +186,11 @@ validation, or difficulty rules are reimplemented in JavaScript.
   attempts). Fixed an initial mislabeling in `GuessHistory` where
   black/white were displayed swapped relative to `Result`'s actual
   semantics (white = right position, black = right color/wrong position).
+- 2026-09-26: Moved API dispatch out of `public/api.php` into
+  `GameApiController::handle()` (testable, added 5 covering tests) so
+  `public/` contains only `index.php`; `index.php` now routes both the SPA
+  and `?action=...` API calls. Frontend now calls `/index.php?action=...`.
+  Fixed the black/white feedback dot colors in `GuessHistory` — the
+  exact-match ("white") dot was transparent and invisible against the
+  dark background, and the color-only-match ("black") dot was rendered
+  near-white; both were effectively backwards and low-contrast.
