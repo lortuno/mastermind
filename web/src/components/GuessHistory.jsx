@@ -12,22 +12,32 @@ export default function GuessHistory({ history }) {
 
   return (
     <ol className="guess-history" aria-label="Submitted guesses">
-      {history.map((guess, attemptIndex) => (
-        <li key={attemptIndex} className="guess-history__row">
-          <span className="guess-history__attempt">#{attemptIndex + 1}</span>
-          {guess.map((letter, position) => {
-            const color = findColor(letter);
-            return (
-              <span
-                key={position}
-                className="guess-history__peg"
-                style={{ backgroundColor: color?.hex }}
-                aria-label={color?.name}
-              >
-                {letter}
-              </span>
-            );
-          })}
+      {history.map((entry) => (
+        <li key={entry.attempt} className="guess-history__row">
+          <span className="guess-history__attempt">#{entry.attempt}</span>
+          <span className="guess-history__pegs">
+            {entry.combination.split('').map((letter, position) => {
+              const color = findColor(letter);
+              return (
+                <span
+                  key={position}
+                  className="guess-history__peg"
+                  style={{ backgroundColor: color?.hex }}
+                  aria-label={color?.name}
+                >
+                  {letter}
+                </span>
+              );
+            })}
+          </span>
+          <span className="guess-history__score">
+            <span className="guess-history__score-item guess-history__score-item--white">
+              {entry.white} right position
+            </span>
+            <span className="guess-history__score-item guess-history__score-item--black">
+              {entry.black} right color, wrong position
+            </span>
+          </span>
         </li>
       ))}
     </ol>

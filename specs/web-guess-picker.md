@@ -1,6 +1,6 @@
 # Spec: Web Guess Picker
 
-**Status**: active
+**Status**: superseded by [[web-gameplay-integration]]
 **Owner**: Laura Ortuño
 **Last updated**: 2026-09-26
 
@@ -12,6 +12,13 @@ game's 5 valid colors (Blue, Red, Yellow, Purple, Green). This is the first
 Web-surface feature for the project; it delivers the picking interaction
 only. It does not replay this guess against the console/PHP scoring engine
 (see Non-Goals) — that is intentionally deferred to a follow-up feature.
+
+> **Superseded**: [[web-gameplay-integration]] wires this picker up to real
+> backend scoring, difficulty selection, and dynamic board width. Several
+> Non-Goals and Design Notes below (fixed width 4, no scoring, no server
+> round-trip, the `App` component shape) describe this feature's *original*
+> scope and no longer match the shipped behavior — see the newer spec for
+> what's live now. Kept here for history/change-log purposes.
 
 The Console experience (`GameConsoleController`, `Views/Console/*`) is
 unaffected by this feature.
@@ -109,3 +116,6 @@ unaffected by this feature.
   dedicated `public/` docroot (`public/index.php` + `public/assets/`) so
   PHP application source under `src/` is no longer directly web-exposed;
   `src/index.php` reverted to its original console-only form.
+- 2026-09-26: Superseded by [[web-gameplay-integration]], which reuses this
+  picker UI but adds real scoring, difficulty selection, and dynamic board
+  width — see that spec for current behavior.

@@ -39,6 +39,105 @@ body {
       margin-bottom: 0.5rem;
     }
   }
+
+  &__error {
+    background: rgba(229, 72, 77, 0.15);
+    border: 1px solid #e5484d;
+    color: #ff8b8e;
+    border-radius: $radius;
+    padding: 0.6rem 0.9rem;
+    margin: 0 0 1rem;
+  }
+}
+
+.difficulty-select {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  max-width: 20rem;
+
+  &__option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.9rem 1rem;
+    border-radius: $radius;
+    border: 1px solid $color-border;
+    background: $color-surface;
+    color: $color-text;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+      border-color: $color-accent;
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-accent;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &__name {
+    font-weight: 700;
+  }
+
+  &__meta {
+    font-size: 0.85rem;
+    color: $color-text-muted;
+  }
+}
+
+.status-banner {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: $radius;
+  border: 1px solid $color-border;
+  background: $color-surface;
+
+  &--win {
+    border-color: #30a46c;
+  }
+
+  &--loss {
+    border-color: #e5484d;
+  }
+
+  &__message {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+  }
+
+  &__secret-label {
+    color: $color-text-muted;
+    margin: 0 0 0.5rem;
+  }
+
+  &__secret {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__peg {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.75);
+  }
 }
 
 .guess-board {
@@ -150,8 +249,9 @@ body {
 
   &__row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius;
@@ -164,6 +264,11 @@ body {
     min-width: 2rem;
   }
 
+  &__pegs {
+    display: flex;
+    gap: 0.4rem;
+  }
+
   &__peg {
     width: 2rem;
     height: 2rem;
@@ -174,6 +279,37 @@ body {
     font-weight: 700;
     font-size: 0.8rem;
     color: rgba(0, 0, 0, 0.75);
+  }
+
+  &__score {
+    display: flex;
+    gap: 0.75rem;
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: $color-text-muted;
+  }
+
+  &__score-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+
+    &::before {
+      content: '';
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    &--black::before {
+      background: #f4f5f7;
+    }
+
+    &--white::before {
+      background: transparent;
+      border: 1px solid $color-text-muted;
+    }
   }
 }
 

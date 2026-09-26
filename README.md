@@ -32,6 +32,7 @@ docker compose exec php-fpm sh
 Note: There is a combination of use statements and include to show php native can work with the code. 
 
 You can browse to http://localhost:80 to see the web view, or run the console version from terminal.
+If you include an alias in `/etc/hosts` you can use that to access the web view.
 
 The web view (`public/index.php`) is a React + Sass single-page app. Its
 source lives in `web/`; the docroot (`public/`) only serves the compiled
