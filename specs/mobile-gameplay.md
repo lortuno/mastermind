@@ -42,10 +42,14 @@ validation, or difficulty rules.
    game is finished THEN the slots, palette, and "Clear" are disabled too,
    so no input is silently discarded when the response resets the board.
 9. WHEN the player submits a complete guess THEN the app calls
-   `POST /index.php?action=guess`, appends the returned attempt (pegs,
+   `POST /index.php?action=guess`, adds the returned attempt (pegs,
    white = right position, black = right color/wrong position) to the
-   attempt log (most recent last), resets the board, and updates the
-   "Attempt N of M" counter from the response.
+   attempt log, resets the board, and updates the "Attempt N of M"
+   counter from the response.
+9a. The attempt log is ordered newest first: the latest attempt is always
+    the first row, directly below the board, and is visually marked as the
+    latest (not by color alone, e.g. a "Latest" label). Attempt numbers
+    keep their server value (#1 is always the first guess played).
 10. WHEN any API call fails (HTTP 4xx/5xx with `{error}`, or a network
     failure) THEN the message is shown in a visible error notice that is
     announced to screen readers (TalkBack and VoiceOver), and the
@@ -109,10 +113,39 @@ validation, or difficulty rules.
   - `src/hooks/useMastermindGame.ts` — the phase state machine
     (`loading → difficulty → playing → finished`) and all API calls.
   - `src/components/*` — presentational components: `DifficultySelect`,
-    `GuessBoard`, `PegSlot`, `ColorPalette`, `GuessHistory`,
-    `GameStatusBanner`, `ErrorNotice`.
+    `GameHeader`, `GuessBoard`, `ColorPalette`, `GuessHistory`, `KeyPegs`,
+    `Peg`, `GameStatusBanner`, `ErrorNotice`, `Button`.
+  - `src/theme.ts` — design tokens, value-for-value mirror of
+    `web/src/styles/_variables.scss` (see "Visual design").
   - `App.tsx` — `SafeAreaProvider` + a `ScrollView` screen composing the
     above from the hook.
+- **Visual design** (shared with [[web-gameplay-integration]]): a dark
+  "tabletop board". Tokens, identical in both clients: palette `bg`
+  `#12151c`, `surface` `#1c202b`, `surfaceRaised` `#242938`,
+  `surfaceSunken` `#0d1016`, `border` `#2c3140`, `borderStrong` `#3b4254`,
+  `text` `#f4f5f7`, `textMuted` `#9aa1b1`, `accent` `#0091ff` (text on it
+  `#12151c`), `danger`/`success` = the red/green peg hexes; spacing 2/4/8/
+  12/16/24/32; radius 6/12/18/pill; type 12/14/16/20/32.
+  - Layout: title → error → header (difficulty and "Attempt N of M" chips
+    plus a segmented bar, one segment per attempt, accent = remaining;
+    `accessibilityRole="progressbar"`, label "Attempts remaining") → raised
+    board tray (slots in a sunken well, palette, Clear/Submit) → win/loss
+    banner → "Attempts" log (newest first).
+  - Slots and swatches flex between 44pt and 56pt so a 5-wide board fits a
+    320pt screen. The active slot gets an accent ring, slight scale, and a
+    bar under it (shape, not only color). Swatches and buttons have a dark
+    bottom "lip" that compresses on press; no animations.
+  - Attempt rows: guess pegs on the left, `KeyPegs` on the right — a
+    two-column grid with one hole per position: solid light dots =
+    `white` (right position), dark dots with a light ring = `black` (right
+    color, wrong position), the rest empty holes. The grid is hidden from
+    screen readers; "N right position" / "N right color, wrong position"
+    stay as visible caption text.
+  - Latest row: 2pt accent border, raised surface and shadow, and an
+    uppercase "Latest" badge. `GuessHistory` renders
+    `[...history].reverse()`; rows keyed by `attempt`.
+  - Peg letters use each color's `textHex` (>= 4.5:1); disabled buttons
+    switch to muted text on `border` instead of fading.
 - **Screen-reader announcements**: `accessibilityLiveRegion` only works
   on Android, so `useIosAnnouncement` calls
   `AccessibilityInfo.announceForAccessibility` on iOS only (calling it on
@@ -134,7 +167,8 @@ validation, or difficulty rules.
 - **Tests**: `jest-expo` + `@testing-library/react-native`. Unit tests
   for `guess.ts`, `config.ts`, and `gameApi.ts` (mocked `fetch`); an
   integration test that renders `App` with a mocked API and walks the
-  difficulty → guess → finish flow.
+  difficulty → guess → finish flow, including newest-first order and the
+  single "Latest" marker after resume and after a submit.
 
 ## Open Questions
 
@@ -163,3 +197,7 @@ validation, or difficulty rules.
   `loading` for the OS default (~60 s per request). Every request now
   aborts after `REQUEST_TIMEOUT_MS` (10 s) with a "did not respond" error
   naming the URL, which leads to the error notice and the Retry button.
+- 2026-09-26: Attempt log reversed to newest first, with the latest attempt
+  marked (Requirement 9a); visual redesign shared with the web client
+  (see [[web-gameplay-integration]]). The API still returns history oldest
+  first; each client reverses it for display.

@@ -4,6 +4,7 @@ import ColorPalette from './components/ColorPalette.jsx';
 import GuessHistory from './components/GuessHistory.jsx';
 import DifficultySelect from './components/DifficultySelect.jsx';
 import GameStatusBanner from './components/GameStatusBanner.jsx';
+import GameHeader from './components/GameHeader.jsx';
 import { fetchDifficulties, fetchState, startGame, submitGuess } from './api/gameApi.js';
 
 function emptyGuess(width) {
@@ -138,35 +139,40 @@ export default function App() {
 
       {(phase === 'playing' || phase === 'finished') && gameState && (
         <>
-          <p className="mastermind__hint">
-            {gameState.difficultyName} · Attempt {gameState.attemptNumber} of {gameState.maxAttempts}
-          </p>
-
-          <GuessBoard
-            guess={guess}
-            activeSlot={activeSlot}
-            onSlotSelect={setActiveSlot}
+          <GameHeader
+            difficultyName={gameState.difficultyName}
+            attemptNumber={gameState.attemptNumber}
+            maxAttempts={gameState.maxAttempts}
           />
 
-          <ColorPalette onPick={handlePickColor} />
+          <div className="board-tray">
+            <p className="board-tray__overline">Your guess</p>
+            <GuessBoard
+              guess={guess}
+              activeSlot={activeSlot}
+              onSlotSelect={setActiveSlot}
+            />
 
-          <div className="mastermind__actions">
-            <button
-              type="button"
-              className="button button--secondary"
-              onClick={handleClear}
-              disabled={phase === 'finished'}
-            >
-              Clear
-            </button>
-            <button
-              type="button"
-              className="button button--primary"
-              disabled={!canSubmit || phase === 'finished' || isSubmitting}
-              onClick={handleSubmitGuess}
-            >
-              Submit Guess
-            </button>
+            <ColorPalette onPick={handlePickColor} />
+
+            <div className="mastermind__actions">
+              <button
+                type="button"
+                className="button button--secondary"
+                onClick={handleClear}
+                disabled={phase === 'finished'}
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                className="button button--primary"
+                disabled={!canSubmit || phase === 'finished' || isSubmitting}
+                onClick={handleSubmitGuess}
+              >
+                Submit guess
+              </button>
+            </div>
           </div>
 
           {phase === 'finished' && (
@@ -178,7 +184,10 @@ export default function App() {
           )}
 
           <section className="mastermind__history">
-            <h2>Attempts</h2>
+            <div className="mastermind__section-header">
+              <h2>Attempts</h2>
+              <span className="mastermind__section-hint">Newest first</span>
+            </div>
             <GuessHistory history={gameState.history} />
           </section>
         </>

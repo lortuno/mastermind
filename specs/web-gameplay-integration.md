@@ -27,7 +27,12 @@ validation, or difficulty rules are reimplemented in JavaScript.
 3. WHEN the player submits a complete guess THEN the frontend calls
    `POST /index.php?action=guess`, the backend scores it via the existing
    `Game`/`Result` classes, and the response's black and white counts are
-   appended to a visible, ordered attempt log (most recent last).
+   added to a visible, ordered attempt log. The log is ordered newest
+   first: the latest attempt is always the first row and is visually
+   marked as the latest (not by color alone, e.g. a "Latest" label).
+   Attempt numbers keep their server value (#1 is always the first guess
+   played). The API's `history` array stays oldest first; the frontend
+   reverses it for display.
 4. WHEN the backend rejects a guess as structurally invalid (wrong length
    or an unrecognized color letter) THEN the request does not count as an
    attempt — no history entry is added and the attempt counter does not
@@ -150,19 +155,44 @@ validation, or difficulty rules are reimplemented in JavaScript.
   "Play again"). `GuessHistory` is extended to show each attempt's
   black/white counts, not just its pegs. Guess/API failures render in an
   `role="alert"` notice (Requirement 4).
-- **Black/white indicator contrast**: the per-attempt score in
-  `GuessHistory` shows a small dot before each count, in addition to the
-  explicit "right position" / "right color, wrong position" text (the
-  text alone already satisfies non-color-dependent identification). On
-  this dark-themed page, a literal black-fill dot for the "black" score
-  and a hollow/transparent one for "white" — the first pass — read as
-  backwards and low-contrast: the "white" (exact-match) dot was
-  transparent and blended into the dark background, and the "black" dot
-  was rendered near-white. Fixed in `web/src/styles/main.scss`:
-  `--white` is now a solid light fill with a dark border (pops against
-  the dark surface, and its color literally reads as "white"); `--black`
-  is a solid dark fill with a visible light-gray ring so it stays legible
-  against the surface instead of disappearing into it.
+- **Black/white feedback as key pegs**: each attempt row shows a
+  `KeyPegs` grid (two columns, one hole per position): `white` (right
+  position) = solid light dot, `black` (right color, wrong position) =
+  dark dot with a light-gray ring, remaining holes empty. The ring exists
+  because a plain dark dot vanished on the dark surface (the first pass
+  also had the two dots backwards). The grid is `aria-hidden`; the
+  explicit "N right position" / "N right color, wrong position" text stays
+  visible, so meaning never depends on color.
+- **Visual design** (shared with [[mobile-gameplay]]): a dark "tabletop
+  board". Tokens live in `web/src/styles/_variables.scss` and must match
+  `mobile/src/theme.ts` value for value (rem = px / 16): palette as
+  before plus `surface-raised` `#242938`, `surface-sunken` `#0d1016`,
+  `border-strong` `#3b4254`, `on-accent` `#12151c`; spacing 2/4/8/12/16/
+  24/32px; radius 6/12/18px/pill; type 12/14/16/20/32px.
+  - Layout: title → `role="alert"` error → `GameHeader` (difficulty and
+    "Attempt N of M" chips plus a segmented `role="progressbar"`
+    "Attempts remaining" bar) → raised board tray (slots in a sunken well,
+    palette, Clear/Submit) → win/loss banner → "Attempts" log (newest
+    first).
+  - Slots and swatches flex between 44px and 56px, so a 5-wide board fits
+    a 320px viewport with no horizontal overflow. The active slot has an
+    accent ring, slight scale, and a bar under it. Swatches and buttons
+    have a pressable bottom lip (hover lifts, `:active` sinks);
+    `:focus-visible` draws a 3px accent outline; `prefers-reduced-motion`
+    turns off transitions and hover lifts. The body has a faint radial
+    pool of light (web only).
+  - Latest row: 2px accent border, raised surface and shadow, and an
+    uppercase "Latest" badge. `GuessHistory` renders
+    `[...history].reverse()`; rows keyed by `attempt`. Pegs are grouped as
+    `role="img"` with labels like "Attempt 3: Red, …" and "Secret
+    combination: …".
+  - Peg letters use each color's `textHex` from
+    `web/src/constants/colors.js` (>= 4.5:1, same as mobile); primary
+    buttons use dark text on the accent (white on it was 3.2:1).
+- **Frontend tests**: Vitest + Testing Library (jsdom, config in
+  `web/vite.config.js`, `npm test` in `web/`) cover `GuessHistory` order,
+  the single "Latest" marker, no mutation of the prop, and the
+  `GameHeader` progressbar.
 - **Reuse discipline**: `src/Model/*` is not modified by this feature —
   every rule (color validity, combination length, scoring, win/loss,
   attempt limits) is read through existing public methods.
@@ -194,3 +224,6 @@ validation, or difficulty rules are reimplemented in JavaScript.
   exact-match ("white") dot was transparent and invisible against the
   dark background, and the color-only-match ("black") dot was rendered
   near-white; both were effectively backwards and low-contrast.
+- 2026-09-26: Attempt log reversed to newest first, with the latest attempt
+  marked (Requirement 3); visual redesign shared with the mobile client
+  (see [[mobile-gameplay]]). No API change.

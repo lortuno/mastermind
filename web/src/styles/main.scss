@@ -1,239 +1,366 @@
 @use 'variables' as *;
 
-* {
+// Tabletop board look: raised trays on a dark table, sunken peg holes,
+// keycap-like swatches with a pressable lip. Mirrors the mobile client.
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background: $color-bg;
+  min-height: 100vh;
+  // Faint pool of light on the table, fading into the page background.
+  background: radial-gradient(120% 60% at 50% 0%, $color-surface 0%, $color-bg 70%) no-repeat, $color-bg;
   color: $color-text;
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.4;
+}
+
+button {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid $color-accent;
+  outline-offset: 3px;
 }
 
 .mastermind {
-  max-width: 32rem;
+  max-width: 34rem;
   margin: 0 auto;
-  padding: 2rem 1rem 3rem;
+  padding: $space-xxl $space-lg 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
 
   h1 {
-    font-size: 1.75rem;
-    margin-bottom: 0.25rem;
+    margin: 0;
+    font-size: $font-display;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   &__hint {
+    margin: 0;
     color: $color-text-muted;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
   }
 
   &__actions {
     display: flex;
-    gap: $gap;
-    margin: 1.5rem 0;
+    gap: $space-md;
+
+    .button {
+      flex: 1;
+    }
   }
 
   &__history {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
     h2 {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
+      margin: 0;
+      font-size: $font-title;
+      font-weight: 800;
     }
+  }
+
+  &__section-hint {
+    font-size: $font-caption;
+    color: $color-text-muted;
   }
 
   &__error {
-    background: rgba(229, 72, 77, 0.15);
-    border: 1px solid #e5484d;
-    color: #ff8b8e;
-    border-radius: $radius;
-    padding: 0.6rem 0.9rem;
-    margin: 0 0 1rem;
+    margin: 0;
+    padding: $space-md $space-lg;
+    border: 1px solid $color-border;
+    border-left: 4px solid $color-danger;
+    border-radius: $radius-md;
+    background: $color-surface-raised;
+    font-size: $font-small;
   }
 }
 
-.difficulty-select {
+// ---- Header ---------------------------------------------------------------
+
+.game-header {
   display: flex;
   flex-direction: column;
-  gap: $gap;
-  max-width: 20rem;
+  gap: $space-md;
 
-  &__option {
+  &__chips {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-    padding: 0.9rem 1rem;
-    border-radius: $radius;
-    border: 1px solid $color-border;
-    background: $color-surface;
-    color: $color-text;
-    cursor: pointer;
-    text-align: left;
-    transition: border-color 0.15s ease, transform 0.15s ease;
-
-    &:hover {
-      border-color: $color-accent;
-      transform: translateY(-1px);
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-accent;
-      outline-offset: 2px;
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
+    flex-wrap: wrap;
+    gap: $space-sm;
   }
 
-  &__name {
+  &__bar {
+    display: flex;
+    gap: $space-xs;
+  }
+
+  &__segment {
+    flex: 1;
+    height: 6px;
+    border-radius: $radius-pill;
+    background: $color-border;
+
+    &--remaining {
+      background: $color-accent;
+    }
+  }
+}
+
+.chip {
+  padding: $space-xs $space-md;
+  border: 1px solid $color-border-strong;
+  border-radius: $radius-pill;
+  background: $color-surface-raised;
+  font-size: $font-small;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+
+  &--accent {
+    border-color: $color-accent;
+  }
+}
+
+// ---- Board tray -----------------------------------------------------------
+
+.board-tray {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  // `md` padding keeps five 44px slots inside a 320px viewport.
+  padding: $space-md $space-md $space-lg;
+  border: 1px solid $color-border-strong;
+  border-radius: $radius-lg;
+  background: $color-surface-raised;
+  box-shadow: $shadow-raised;
+
+  &__overline {
+    margin: 0 0 (-$space-sm);
+    font-size: $font-caption;
     font-weight: 700;
-  }
-
-  &__meta {
-    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: $color-text-muted;
   }
 }
 
-.status-banner {
-  margin: 1.5rem 0;
-  padding: 1rem 1.25rem;
-  border-radius: $radius;
-  border: 1px solid $color-border;
-  background: $color-surface;
-
-  &--win {
-    border-color: #30a46c;
-  }
-
-  &--loss {
-    border-color: #e5484d;
-  }
-
-  &__message {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem;
-  }
-
-  &__secret-label {
-    color: $color-text-muted;
-    margin: 0 0 0.5rem;
-  }
-
-  &__secret {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  &__peg {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    color: rgba(0, 0, 0, 0.75);
-  }
-}
-
+// A groove carved into the tray that holds the guess pegs.
 .guess-board {
   display: flex;
-  flex-wrap: wrap;
-  gap: $gap;
-  margin-bottom: 1.5rem;
+  justify-content: center;
+  gap: $space-xs;
+  padding: $space-md $space-sm $space-sm;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background: $color-surface-sunken;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+
+  &__column {
+    flex: 1 1 0;
+    min-width: $touch-min;
+    max-width: $peg-max;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__marker {
+    width: 45%;
+    height: 4px;
+    border-radius: $radius-pill;
+
+    &--active {
+      background: $color-accent;
+    }
+  }
 }
 
 .peg-slot {
-  width: $peg-size;
-  height: $peg-size;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2px solid $color-border-strong;
   border-radius: 50%;
-  border: 2px dashed $color-border;
-  background: $color-surface;
+  background: $color-bg;
   color: $color-text;
-  font-weight: 700;
+  font-size: $font-title;
+  font-weight: 800;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform $duration-fast ease, border-color $duration-fast ease;
 
   &--filled {
-    border-style: solid;
     border-color: transparent;
+    box-shadow: inset 0 -3px 0 $shadow-lip;
   }
 
   &--active {
-    box-shadow: 0 0 0 3px $color-accent;
+    border: 3px solid $color-accent;
+    transform: scale(1.06);
   }
 
-  &:focus-visible {
-    outline: 2px solid $color-accent;
-    outline-offset: 2px;
-  }
-
-  &:hover {
-    transform: scale(1.05);
+  @media (hover: hover) {
+    &:hover {
+      border-color: $color-accent;
+    }
   }
 }
 
 .color-palette {
   display: flex;
-  flex-wrap: wrap;
-  gap: $gap;
-  margin-bottom: 1rem;
+  justify-content: center;
+  gap: $space-sm;
 }
 
+// Keycap swatches: a lip underneath that compresses on press.
 .color-swatch {
-  width: $swatch-size;
-  height: $swatch-size;
-  border-radius: $radius;
+  flex: 1 1 0;
+  min-width: $touch-min;
+  max-width: $peg-max;
+  aspect-ratio: 1;
+  padding: 0;
   border: none;
-  color: rgba(0, 0, 0, 0.75);
-  font-weight: 700;
+  border-radius: $radius-md;
+  box-shadow: 0 4px 0 $shadow-lip;
+  font-size: $font-title;
+  font-weight: 800;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform $duration-fast ease, box-shadow $duration-fast ease;
 
-  &:hover {
-    transform: translateY(-2px);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 $shadow-lip;
+    }
   }
 
-  &:focus-visible {
-    outline: 2px solid $color-accent;
-    outline-offset: 2px;
+  &:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 $shadow-lip;
   }
 }
 
 .button {
-  padding: 0.6rem 1.2rem;
-  border-radius: $radius;
-  border: 1px solid $color-border;
-  font-weight: 600;
+  min-height: calc(#{$touch-min} + #{$space-xs});
+  padding: 0 $space-lg;
+  border: 1px solid $color-border-strong;
+  border-radius: $radius-md;
+  font-weight: 700;
   cursor: pointer;
+  transition: transform $duration-fast ease, box-shadow $duration-fast ease;
+
+  &:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 $shadow-lip;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: $color-text-muted;
+    box-shadow: none;
+  }
 
   &--primary {
-    background: $color-accent;
     border-color: $color-accent;
-    color: #fff;
+    background: $color-accent;
+    color: $color-on-accent;
+    box-shadow: 0 3px 0 $shadow-lip;
 
     &:disabled {
-      background: $color-border;
       border-color: $color-border;
-      color: $color-text-muted;
-      cursor: not-allowed;
+      background: $color-border;
     }
   }
 
   &--secondary {
-    background: transparent;
+    background: $color-surface;
     color: $color-text;
-  }
+    box-shadow: 0 3px 0 $color-surface-sunken;
 
-  &:focus-visible {
-    outline: 2px solid $color-accent;
-    outline-offset: 2px;
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        border-color: $color-text-muted;
+      }
+    }
+
+    &:disabled {
+      border-color: $color-border;
+    }
   }
 }
+
+// ---- Pegs -----------------------------------------------------------------
+
+.peg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 50%;
+  background: $color-surface;
+  box-shadow: inset 0 -2px 0 $shadow-lip;
+  font-weight: 800;
+
+  &--sm {
+    width: $history-peg;
+    height: $history-peg;
+    font-size: $font-caption;
+  }
+
+  &--lg {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: $font-body;
+  }
+}
+
+.key-pegs {
+  display: grid;
+  grid-template-columns: repeat(2, $key-peg);
+  gap: $space-xs;
+  flex: none;
+
+  &__peg {
+    width: $key-peg;
+    height: $key-peg;
+    border: 1px solid;
+    border-radius: 50%;
+
+    // Right color, right position: solid light peg.
+    &--white {
+      background: $color-text;
+      border-color: $color-text;
+    }
+
+    // Right color, wrong position: dark peg with a light ring so it reads on the dark board.
+    &--black {
+      background: $color-bg;
+      border-color: $color-text-muted;
+    }
+
+    // Unscored hole.
+    &--empty {
+      background: $color-surface-sunken;
+      border-color: $color-border;
+    }
+  }
+}
+
+// ---- Attempt log ----------------------------------------------------------
 
 .guess-history {
   list-style: none;
@@ -241,92 +368,230 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: $space-sm;
 
   &__empty {
+    margin: 0;
+    padding: $space-lg;
+    border: 1px dashed $color-border;
+    border-radius: $radius-md;
+    text-align: center;
+    font-size: $font-small;
     color: $color-text-muted;
   }
 
   &__row {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
-    background: $color-surface;
+    flex-direction: column;
+    gap: $space-sm;
+    padding: $space-md;
     border: 1px solid $color-border;
-    border-radius: $radius;
-    padding: 0.5rem 0.75rem;
+    border-radius: $radius-md;
+    background: $color-surface;
+
+    &--latest {
+      border: 2px solid $color-accent;
+      background: $color-surface-raised;
+      box-shadow: $shadow-raised;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
   }
 
   &__attempt {
+    font-size: $font-small;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
     color: $color-text-muted;
-    font-size: 0.85rem;
-    min-width: 2rem;
+
+    .guess-history__row--latest & {
+      color: $color-text;
+    }
+  }
+
+  &__badge {
+    padding: $space-xxs $space-sm;
+    border-radius: $radius-pill;
+    background: $color-accent;
+    color: $color-on-accent;
+    font-size: $font-caption;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  // Guess pegs on the left, the scoring grid on the right, like a physical board row.
+  &__board {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-md;
   }
 
   &__pegs {
     display: flex;
-    gap: 0.4rem;
-  }
-
-  &__peg {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: rgba(0, 0, 0, 0.75);
+    gap: $space-xs;
   }
 
   &__score {
     display: flex;
-    gap: 0.75rem;
-    margin-left: auto;
-    font-size: 0.8rem;
+    flex-wrap: wrap;
+    column-gap: $space-md;
+    font-size: $font-caption;
     color: $color-text-muted;
-  }
-
-  &__score-item {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-
-    &::before {
-      content: '';
-      width: 0.6rem;
-      height: 0.6rem;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    // "White" (right color, right position) is the strong signal, so it
-    // gets a solid, high-contrast fill against the dark page background.
-    &--white::before {
-      background: #f4f5f7;
-      border: 1px solid rgba(0, 0, 0, 0.35);
-    }
-
-    // "Black" (right color, wrong position) still needs to read against
-    // the dark surface, so it's a dark fill with a visible light ring
-    // rather than blending into the background.
-    &--black::before {
-      background: #12151c;
-      border: 1px solid $color-text-muted;
-    }
   }
 }
 
-@media (max-width: 22rem) {
-  .peg-slot {
-    width: 2.5rem;
-    height: 2.5rem;
+// ---- Difficulty selection -------------------------------------------------
+
+.difficulty-select {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    min-height: $touch-min;
+    padding: $space-lg;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-lg;
+    background: $color-surface-raised;
+    box-shadow: 0 4px 0 $color-surface-sunken, $shadow-raised;
+    color: $color-text;
+    text-align: left;
+    cursor: pointer;
+    transition: transform $duration-fast ease, border-color $duration-fast ease, box-shadow $duration-fast ease;
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        border-color: $color-accent;
+        transform: translateY(-2px);
+      }
+    }
+
+    &:active:not(:disabled) {
+      border-color: $color-accent;
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 $color-surface-sunken;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
   }
 
-  .color-swatch {
-    width: 2.5rem;
-    height: 2.5rem;
+  &__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+
+  &__name {
+    font-size: $font-title;
+    font-weight: 800;
+  }
+
+  &__meta {
+    font-size: $font-small;
+    color: $color-text-muted;
+  }
+
+  &__preview {
+    display: flex;
+    flex: none;
+    gap: $space-xs;
+    padding: $space-sm;
+    border-radius: $radius-pill;
+    background: $color-surface-sunken;
+  }
+
+  &__hole {
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 1px solid $color-border-strong;
+    border-radius: 50%;
+  }
+}
+
+// ---- Win / loss banner ----------------------------------------------------
+
+.status-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-xl $space-lg;
+  border: 2px solid $color-border;
+  border-radius: $radius-lg;
+  background: $color-surface-raised;
+  box-shadow: $shadow-raised;
+  text-align: center;
+
+  &--win {
+    border-color: $color-success;
+  }
+
+  &--loss {
+    border-color: $color-danger;
+  }
+
+  &__tagline {
+    margin: 0;
+    font-size: $font-caption;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $color-text-muted;
+  }
+
+  &__message {
+    margin: 0;
+    font-size: $font-display;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  &__secret-label {
+    margin: $space-sm 0 0;
+    font-size: $font-small;
+    color: $color-text-muted;
+  }
+
+  &__secret {
+    display: flex;
+    gap: $space-sm;
+    padding: $space-md;
+    border: 1px solid $color-border;
+    border-radius: $radius-pill;
+    background: $color-surface-sunken;
+  }
+
+  &__action {
+    align-self: stretch;
+    margin-top: $space-md;
+  }
+}
+
+// ---- Accessibility --------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .color-swatch:hover,
+  .difficulty-select__option:hover {
+    transform: none !important;
   }
 }

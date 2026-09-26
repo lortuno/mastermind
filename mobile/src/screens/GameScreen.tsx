@@ -5,11 +5,12 @@ import Button from '../components/Button';
 import ColorPalette from '../components/ColorPalette';
 import DifficultySelect from '../components/DifficultySelect';
 import ErrorNotice from '../components/ErrorNotice';
+import GameHeader from '../components/GameHeader';
 import GameStatusBanner from '../components/GameStatusBanner';
 import GuessBoard from '../components/GuessBoard';
 import GuessHistory from '../components/GuessHistory';
 import { useMastermindGame } from '../hooks/useMastermindGame';
-import { palette, spacing } from '../theme';
+import { RAISED_SHADOW, fontSize, palette, radius, spacing } from '../theme';
 
 type Props = {
   api: GameApi;
@@ -50,22 +51,25 @@ export default function GameScreen({ api }: Props) {
 
         {isBoardVisible && (
           <>
-            <Text style={styles.hint}>
-              {gameState.difficultyName} · Attempt {gameState.attemptNumber} of {gameState.maxAttempts}
-            </Text>
-
-            <GuessBoard
-              guess={game.board.guess}
-              activeSlot={game.board.activeSlot}
-              onSlotSelect={game.selectSlot}
-              isDisabled={game.isBoardLocked}
+            <GameHeader
+              difficultyName={gameState.difficultyName}
+              attemptNumber={gameState.attemptNumber}
+              maxAttempts={gameState.maxAttempts}
             />
 
-            <ColorPalette onPick={game.pickColor} isDisabled={game.isBoardLocked} />
-
-            <View style={styles.actions}>
-              <Button label="Clear" variant="secondary" onPress={game.clearGuess} isDisabled={game.isBoardLocked} />
-              <Button label="Submit guess" onPress={game.submitGuess} isDisabled={!game.canSubmit} />
+            <View style={styles.tray}>
+              <Text style={styles.overline}>Your guess</Text>
+              <GuessBoard
+                guess={game.board.guess}
+                activeSlot={game.board.activeSlot}
+                onSlotSelect={game.selectSlot}
+                isDisabled={game.isBoardLocked}
+              />
+              <ColorPalette onPick={game.pickColor} isDisabled={game.isBoardLocked} />
+              <View style={styles.actions}>
+                <Button label="Clear" variant="secondary" onPress={game.clearGuess} isDisabled={game.isBoardLocked} />
+                <Button label="Submit guess" onPress={game.submitGuess} isDisabled={!game.canSubmit} />
+              </View>
             </View>
 
             {isFinished && (
@@ -77,9 +81,12 @@ export default function GameScreen({ api }: Props) {
             )}
 
             <View style={styles.history}>
-              <Text accessibilityRole="header" style={styles.subtitle}>
-                Attempts
-              </Text>
+              <View style={styles.sectionHeader}>
+                <Text accessibilityRole="header" style={styles.subtitle}>
+                  Attempts
+                </Text>
+                <Text style={styles.sectionHint}>Newest first</Text>
+              </View>
               <GuessHistory history={gameState.history} />
             </View>
           </>
@@ -95,19 +102,39 @@ const styles = StyleSheet.create({
     backgroundColor: palette.bg,
   },
   content: {
-    gap: spacing.lg,
+    gap: spacing.xl,
     padding: spacing.lg,
-    paddingBottom: spacing.xl,
+    paddingBottom: spacing.xxl,
   },
   title: {
     color: palette.text,
-    fontSize: 34,
+    fontSize: fontSize.display,
     fontWeight: '800',
     letterSpacing: -0.5,
   },
   hint: {
     color: palette.textMuted,
-    fontSize: 16,
+    fontSize: fontSize.body,
+  },
+  // The raised board tray: slots, palette, and actions form one physical panel.
+  // Padding is `md` so five 44pt slots still fit on a 320pt-wide screen.
+  tray: {
+    gap: spacing.lg,
+    padding: spacing.md,
+    paddingBottom: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: palette.borderStrong,
+    backgroundColor: palette.surfaceRaised,
+    boxShadow: RAISED_SHADOW,
+  },
+  overline: {
+    color: palette.textMuted,
+    fontSize: fontSize.caption,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    marginBottom: -spacing.sm,
   },
   actions: {
     flexDirection: 'row',
@@ -116,9 +143,18 @@ const styles = StyleSheet.create({
   history: {
     gap: spacing.md,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+  },
   subtitle: {
     color: palette.text,
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: fontSize.title,
+    fontWeight: '800',
+  },
+  sectionHint: {
+    color: palette.textMuted,
+    fontSize: fontSize.caption,
   },
 });

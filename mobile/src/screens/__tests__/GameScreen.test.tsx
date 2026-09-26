@@ -33,6 +33,20 @@ function createFakeApi(overrides: Partial<GameApi> = {}): jest.Mocked<GameApi> {
   } as jest.Mocked<GameApi>;
 }
 
+const THREE_ATTEMPTS = [
+  { attempt: 1, combination: 'RRGG', black: 0, white: 1 },
+  { attempt: 2, combination: 'BBYY', black: 1, white: 0 },
+  { attempt: 3, combination: 'PPRG', black: 2, white: 1 },
+];
+
+// Attempt numbers and "Latest" badges in on-screen order, e.g. ['#3', 'Latest', '#2', '#1'].
+function attemptLogMarkers(): string[] {
+  const log = screen.getByLabelText('Submitted guesses');
+  return within(log)
+    .getAllByText(/^(#\d+|Latest)$/)
+    .map((node) => [node.props.children].flat().join(''));
+}
+
 async function pickColors(names: string[]) {
   for (const name of names) {
     await fireEvent.press(screen.getByRole('button', { name }));
@@ -64,7 +78,8 @@ describe('GameScreen', () => {
 
     await render(<GameScreen api={api} />);
 
-    expect(await screen.findByText('Medium · Attempt 1 of 8')).toBeOnTheScreen();
+    expect(await screen.findByText('Attempt 1 of 8')).toBeOnTheScreen();
+    expect(screen.getByText('Medium')).toBeOnTheScreen();
     expect(screen.queryByRole('button', { name: /^Easy/ })).toBeNull();
     expect(screen.getByText('2 right position')).toBeOnTheScreen();
   });
@@ -109,7 +124,7 @@ describe('GameScreen', () => {
     await fireEvent.press(submit);
 
     expect(api.submitGuess).toHaveBeenCalledWith('RGBY');
-    expect(await screen.findByText('Medium · Attempt 1 of 8')).toBeOnTheScreen();
+    expect(await screen.findByText('Attempt 1 of 8')).toBeOnTheScreen();
     const log = screen.getByLabelText('Submitted guesses');
     expect(within(log).getByText('2 right position')).toBeOnTheScreen();
     expect(within(log).getByText('1 right color, wrong position')).toBeOnTheScreen();
@@ -246,5 +261,38 @@ describe('GameScreen', () => {
     await render(<GameScreen api={api} />);
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not reach the game server.');
+  });
+
+  describe('attempt log order', () => {
+    it('lists attempts newest first and marks only the newest one as latest', async () => {
+      const history = [...THREE_ATTEMPTS];
+      const api = createFakeApi({
+        fetchState: jest.fn().mockResolvedValue(gameState({ attemptNumber: 3, history })),
+      });
+
+      await render(<GameScreen api={api} />);
+      await screen.findByText('Attempt 3 of 8');
+
+      expect(attemptLogMarkers()).toEqual(['#3', 'Latest', '#2', '#1']);
+      expect(screen.getAllByText('Latest')).toHaveLength(1);
+      // Display-only reversal: the server's oldest-first array is not mutated.
+      expect(history.map((entry) => entry.attempt)).toEqual([1, 2, 3]);
+    });
+
+    it('puts a newly submitted attempt at the top of the log', async () => {
+      const api = createFakeApi({
+        fetchState: jest.fn().mockResolvedValue(gameState({ attemptNumber: 2, history: THREE_ATTEMPTS.slice(0, 2) })),
+        submitGuess: jest.fn().mockResolvedValue(gameState({ attemptNumber: 3, history: THREE_ATTEMPTS })),
+      });
+      await render(<GameScreen api={api} />);
+      await screen.findByText('Attempt 2 of 8');
+      expect(attemptLogMarkers()).toEqual(['#2', 'Latest', '#1']);
+
+      await pickColors(['Purple', 'Purple', 'Red', 'Green']);
+      await fireEvent.press(screen.getByRole('button', { name: 'Submit guess' }));
+
+      await screen.findByText('Attempt 3 of 8');
+      expect(attemptLogMarkers()).toEqual(['#3', 'Latest', '#2', '#1']);
+    });
   });
 });

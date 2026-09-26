@@ -1,11 +1,49 @@
+// Design tokens. MUST stay in sync with mobile/src/theme.ts: same values in
+// both clients (rem here = px / 16 there).
+
+// Palette
 $color-bg: #12151c;
 $color-surface: #1c202b;
+$color-surface-raised: #242938; // board tray, chips, latest row
+$color-surface-sunken: #0d1016; // peg holes and wells
 $color-border: #2c3140;
+$color-border-strong: #3b4254;
 $color-text: #f4f5f7;
 $color-text-muted: #9aa1b1;
 $color-accent: #0091ff;
+$color-on-accent: #12151c; // text on accent fills (5.6:1)
+$color-danger: #e5484d;
+$color-success: #30a46c;
 
-$peg-size: 3.25rem;
-$swatch-size: 3rem;
-$radius: 0.75rem;
-$gap: 0.75rem;
+// Spacing scale (2, 4, 8, 12, 16, 24, 32 px)
+$space-xxs: 0.125rem;
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 0.75rem;
+$space-lg: 1rem;
+$space-xl: 1.5rem;
+$space-xxl: 2rem;
+
+// Radius (6, 12, 18 px, pill)
+$radius-sm: 0.375rem;
+$radius-md: 0.75rem;
+$radius-lg: 1.125rem;
+$radius-pill: 999px;
+
+// Type scale (12, 14, 16, 20, 32 px)
+$font-caption: 0.75rem;
+$font-small: 0.875rem;
+$font-body: 1rem;
+$font-title: 1.25rem;
+$font-display: 2rem;
+
+// Sizes
+$touch-min: 2.75rem; // 44px minimum target
+$peg-max: 3.5rem; // slots and swatches flex between $touch-min and this
+$history-peg: 1.75rem;
+$key-peg: 0.625rem;
+
+// Depth and motion
+$shadow-raised: 0 6px 16px rgba(0, 0, 0, 0.45);
+$shadow-lip: rgba(0, 0, 0, 0.35);
+$duration-fast: 120ms;

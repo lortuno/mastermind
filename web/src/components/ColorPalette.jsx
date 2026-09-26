@@ -9,7 +9,7 @@ export default function ColorPalette({ onPick }) {
           key={color.letter}
           type="button"
           className="color-swatch"
-          style={{ backgroundColor: color.hex }}
+          style={{ backgroundColor: color.hex, color: color.textHex }}
           aria-label={color.name}
           onClick={() => onPick(color.letter)}
         >

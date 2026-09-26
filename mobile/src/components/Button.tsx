@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
-import { MIN_TOUCH_TARGET, palette, radius, spacing } from '../theme';
+import { MIN_TOUCH_TARGET, fontSize, palette, radius, spacing } from '../theme';
 
 type Props = {
   label: string;
@@ -21,10 +21,10 @@ export default function Button({ label, onPress, variant = 'primary', isDisabled
         styles.base,
         isPrimary ? styles.primary : styles.secondary,
         pressed && styles.pressed,
-        isDisabled && styles.disabled,
+        isDisabled && (isPrimary ? styles.primaryDisabled : styles.secondaryDisabled),
       ]}
     >
-      <Text style={[styles.label, isPrimary && styles.primaryLabel]}>{label}</Text>
+      <Text style={[styles.label, isPrimary && styles.primaryLabel, isDisabled && styles.disabledLabel]}>{label}</Text>
     </Pressable>
   );
 }
@@ -32,32 +32,46 @@ export default function Button({ label, onPress, variant = 'primary', isDisabled
 const styles = StyleSheet.create({
   base: {
     flex: 1,
-    minHeight: MIN_TOUCH_TARGET,
+    minHeight: MIN_TOUCH_TARGET + spacing.xs,
     paddingHorizontal: spacing.lg,
-    borderRadius: radius,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
+    // Physical "lip" that compresses on press.
+    borderBottomWidth: 3,
   },
   primary: {
     backgroundColor: palette.accent,
+    borderBottomColor: 'rgba(0, 0, 0, 0.35)',
   },
   secondary: {
     backgroundColor: palette.surface,
     borderWidth: 1,
-    borderColor: palette.border,
+    borderBottomWidth: 3,
+    borderColor: palette.borderStrong,
   },
   pressed: {
-    transform: [{ scale: 0.97 }],
+    borderBottomWidth: 1,
+    transform: [{ translateY: 2 }],
   },
-  disabled: {
-    opacity: 0.4,
+  // Disabled buttons drop the lip and fill instead of fading text below 4.5:1.
+  primaryDisabled: {
+    backgroundColor: palette.border,
+    borderBottomWidth: 0,
+  },
+  secondaryDisabled: {
+    borderColor: palette.border,
+    borderBottomWidth: 1,
   },
   label: {
     color: palette.text,
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: fontSize.body,
+    fontWeight: '700',
   },
   primaryLabel: {
-    color: palette.bg,
+    color: palette.onAccent,
+  },
+  disabledLabel: {
+    color: palette.textMuted,
   },
 });

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useIosAnnouncement } from '../hooks/useIosAnnouncement';
-import { palette, radius, spacing } from '../theme';
+import { fontSize, palette, radius, spacing } from '../theme';
 
 type Props = {
   message: string;
@@ -18,14 +18,18 @@ export default function ErrorNotice({ message }: Props) {
 
 const styles = StyleSheet.create({
   notice: {
+    borderWidth: 1,
     borderLeftWidth: 4,
+    borderColor: palette.border,
     borderLeftColor: palette.danger,
-    backgroundColor: palette.surface,
-    borderRadius: radius,
-    padding: spacing.md,
+    backgroundColor: palette.surfaceRaised,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   text: {
     color: palette.text,
-    fontSize: 15,
+    fontSize: fontSize.small,
+    lineHeight: 20,
   },
 });

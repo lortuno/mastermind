@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLORS, type ColorLetter } from '../game/colors';
-import { PEG_SIZE, spacing } from '../theme';
+import { MIN_TOUCH_TARGET, PEG_MAX_SIZE, fontSize, radius, spacing } from '../theme';
 
 type Props = {
   onPick: (letter: ColorLetter) => void;
@@ -35,25 +35,32 @@ export default function ColorPalette({ onPick, isDisabled }: Props) {
 const styles = StyleSheet.create({
   palette: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: spacing.md,
+    gap: spacing.sm,
   },
+  // Swatches share the row and stay square: 44pt on a 320pt screen, up to 56pt.
   swatch: {
-    width: PEG_SIZE,
-    height: PEG_SIZE,
-    borderRadius: PEG_SIZE / 4,
+    flex: 1,
+    aspectRatio: 1,
+    minWidth: MIN_TOUCH_TARGET,
+    maxWidth: PEG_MAX_SIZE,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
+    // Keycap lip: the swatch visibly sinks when pressed.
+    borderBottomWidth: 4,
+    borderBottomColor: 'rgba(0, 0, 0, 0.35)',
   },
   pressed: {
-    transform: [{ scale: 0.92 }],
+    borderBottomWidth: 1,
+    transform: [{ translateY: 3 }],
   },
   disabled: {
     opacity: 0.35,
+    borderBottomWidth: 0,
   },
   letter: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: fontSize.title,
+    fontWeight: '800',
   },
 });
