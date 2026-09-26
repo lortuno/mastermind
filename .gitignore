@@ -18,3 +18,4 @@
 ###< phpunit/phpunit ###
 
 /logs/nginx/
+.claude/*
