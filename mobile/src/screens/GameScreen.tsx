@@ -1,0 +1,124 @@
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { GameApi } from '../api/gameApi';
+import Button from '../components/Button';
+import ColorPalette from '../components/ColorPalette';
+import DifficultySelect from '../components/DifficultySelect';
+import ErrorNotice from '../components/ErrorNotice';
+import GameStatusBanner from '../components/GameStatusBanner';
+import GuessBoard from '../components/GuessBoard';
+import GuessHistory from '../components/GuessHistory';
+import { useMastermindGame } from '../hooks/useMastermindGame';
+import { palette, spacing } from '../theme';
+
+type Props = {
+  api: GameApi;
+};
+
+export default function GameScreen({ api }: Props) {
+  const game = useMastermindGame(api);
+  const { phase, gameState } = game;
+  const isFinished = phase === 'finished';
+  const isBoardVisible = (phase === 'playing' || isFinished) && gameState !== null;
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Text accessibilityRole="header" style={styles.title}>
+          Mastermind
+        </Text>
+
+        {game.error && <ErrorNotice message={game.error} />}
+
+        {phase === 'loading' && <ActivityIndicator accessibilityLabel="Loading" color={palette.accent} size="large" />}
+
+        {phase === 'difficulty' && (
+          <>
+            <Text style={styles.hint}>Choose a difficulty to start a new game.</Text>
+            <DifficultySelect
+              difficulties={game.difficulties}
+              onSelect={game.selectDifficulty}
+              isSubmitting={game.isSubmitting}
+            />
+            {game.canRetryLoad && (
+              <View style={styles.actions}>
+                <Button label="Retry" onPress={game.retryLoad} />
+              </View>
+            )}
+          </>
+        )}
+
+        {isBoardVisible && (
+          <>
+            <Text style={styles.hint}>
+              {gameState.difficultyName} · Attempt {gameState.attemptNumber} of {gameState.maxAttempts}
+            </Text>
+
+            <GuessBoard
+              guess={game.board.guess}
+              activeSlot={game.board.activeSlot}
+              onSlotSelect={game.selectSlot}
+              isDisabled={game.isBoardLocked}
+            />
+
+            <ColorPalette onPick={game.pickColor} isDisabled={game.isBoardLocked} />
+
+            <View style={styles.actions}>
+              <Button label="Clear" variant="secondary" onPress={game.clearGuess} isDisabled={game.isBoardLocked} />
+              <Button label="Submit guess" onPress={game.submitGuess} isDisabled={!game.canSubmit} />
+            </View>
+
+            {isFinished && (
+              <GameStatusBanner
+                isWinner={gameState.isWinner}
+                secretCombination={gameState.secretCombination ?? []}
+                onPlayAgain={game.playAgain}
+              />
+            )}
+
+            <View style={styles.history}>
+              <Text accessibilityRole="header" style={styles.subtitle}>
+                Attempts
+              </Text>
+              <GuessHistory history={gameState.history} />
+            </View>
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: palette.bg,
+  },
+  content: {
+    gap: spacing.lg,
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+  title: {
+    color: palette.text,
+    fontSize: 34,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  hint: {
+    color: palette.textMuted,
+    fontSize: 16,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  history: {
+    gap: spacing.md,
+  },
+  subtitle: {
+    color: palette.text,
+    fontSize: 20,
+    fontWeight: '700',
+  },
+});
