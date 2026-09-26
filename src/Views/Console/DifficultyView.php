@@ -2,9 +2,9 @@
 
 namespace App\Views\Console;
 
-use App\Controller\Model\Difficulty;
-use App\Controller\Model\InvalidCombinationError;
-use App\Controller\Model\Level\LevelInterface;
+use App\Model\Difficulty;
+use App\Model\InvalidCombinationError;
+use App\Model\Level\LevelInterface;
 use Throwable;
 
 class DifficultyView

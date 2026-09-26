@@ -1,0 +1,190 @@
+@use 'variables' as *;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: $color-bg;
+  color: $color-text;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.mastermind {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__hint {
+    color: $color-text-muted;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $gap;
+    margin: 1.5rem 0;
+  }
+
+  &__history {
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+.guess-board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap;
+  margin-bottom: 1.5rem;
+}
+
+.peg-slot {
+  width: $peg-size;
+  height: $peg-size;
+  border-radius: 50%;
+  border: 2px dashed $color-border;
+  background: $color-surface;
+  color: $color-text;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &--filled {
+    border-style: solid;
+    border-color: transparent;
+  }
+
+  &--active {
+    box-shadow: 0 0 0 3px $color-accent;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap;
+  margin-bottom: 1rem;
+}
+
+.color-swatch {
+  width: $swatch-size;
+  height: $swatch-size;
+  border-radius: $radius;
+  border: none;
+  color: rgba(0, 0, 0, 0.75);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.button {
+  padding: 0.6rem 1.2rem;
+  border-radius: $radius;
+  border: 1px solid $color-border;
+  font-weight: 600;
+  cursor: pointer;
+
+  &--primary {
+    background: $color-accent;
+    border-color: $color-accent;
+    color: #fff;
+
+    &:disabled {
+      background: $color-border;
+      border-color: $color-border;
+      color: $color-text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  &--secondary {
+    background: transparent;
+    color: $color-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.guess-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__empty {
+    color: $color-text-muted;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius;
+    padding: 0.5rem 0.75rem;
+  }
+
+  &__attempt {
+    color: $color-text-muted;
+    font-size: 0.85rem;
+    min-width: 2rem;
+  }
+
+  &__peg {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.75);
+  }
+}
+
+@media (max-width: 22rem) {
+  .peg-slot {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .color-swatch {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}

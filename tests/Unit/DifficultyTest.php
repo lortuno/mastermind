@@ -1,10 +1,10 @@
 <?php
 
-use App\Controller\Model\Difficulty;
-use App\Controller\Model\InvalidCombinationError;
-use App\Controller\Model\Level\Easy;
-use App\Controller\Model\Level\Hard;
-use App\Controller\Model\Level\Medium;
+use App\Model\Difficulty;
+use App\Model\InvalidCombinationError;
+use App\Model\Level\Easy;
+use App\Model\Level\Hard;
+use App\Model\Level\Medium;
 use PHPUnit\Framework\TestCase;
 
 include_once 'src/Model/Difficulty.php';

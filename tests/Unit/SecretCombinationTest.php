@@ -1,8 +1,8 @@
 <?php
 
-use App\Controller\Model\InvalidCombinationError;
-use App\Controller\Model\Level\Hard;
-use App\Controller\Model\SecretCombination;
+use App\Model\InvalidCombinationError;
+use App\Model\Level\Hard;
+use App\Model\SecretCombination;
 use PHPUnit\Framework\TestCase;
 
 include_once 'src/Model/Result.php';

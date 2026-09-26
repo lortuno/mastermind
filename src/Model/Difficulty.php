@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Controller\Model;
+namespace App\Model;
 
-use App\Controller\Model\Level\BaseLevel;
-use App\Controller\Model\Level\Easy;
-use App\Controller\Model\Level\Hard;
-use App\Controller\Model\Level\LevelInterface;
-use App\Controller\Model\Level\Medium;
+use App\Model\Level\BaseLevel;
+use App\Model\Level\Easy;
+use App\Model\Level\Hard;
+use App\Model\Level\LevelInterface;
+use App\Model\Level\Medium;
 
 include_once('Level/LevelInterface.php');
 include_once('Level/Easy.php');

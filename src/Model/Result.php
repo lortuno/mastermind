@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Model;
+namespace App\Model;
 
 include_once('ProposedCombination.php');
 include_once('SecretCombination.php');

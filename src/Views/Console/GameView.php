@@ -2,8 +2,8 @@
 
 namespace App\Views\Console;
 
-use App\Controller\Model\Game;
-use App\Controller\Model\InvalidCombinationError;
+use App\Model\Game;
+use App\Model\InvalidCombinationError;
 use Exception;
 
 include_once('ErrorView.php');
@@ -35,7 +35,7 @@ class GameView
         $this->makeAttempt();
     }
 
-    private function resumeGame()
+    private function resumeGame(): void
     {
         $resumeGame = readline(' ¿Quieres empezar una nueva partida? Y/N: ');
         $lowerCaseResponse = strtolower($resumeGame);

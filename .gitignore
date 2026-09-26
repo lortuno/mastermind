@@ -19,3 +19,7 @@
 
 /logs/nginx/
 .claude/*
+
+# Web frontend (React/Sass build)
+/web/node_modules/
+/public/assets/

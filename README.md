@@ -11,7 +11,7 @@ In this project at the moment the valid colors are:
 
 To start project without docker:
 ``
-php -S localhost:8000 -t src 
+php -S localhost:8000 -t public 
 ``
 
 To start project with docker:
@@ -29,8 +29,21 @@ To access the docker container:
 ``
 docker compose exec php-fpm sh
 ``
+Note: There is a combination of use statements and include to show php native can work with the code. 
 
-You can browse to http://web.local
+You can browse to http://localhost:80 to see the web view, or run the console version from terminal.
+
+The web view (`public/index.php`) is a React + Sass single-page app. Its
+source lives in `web/`; the docroot (`public/`) only serves the compiled
+output plus the front controller — build it once before browsing:
+```
+cd web
+npm install
+npm run build
+```
+This writes `public/assets/mastermind-web.{js,css}`, gitignored, rebuild
+after any change under `web/src/`. `npm --prefix web run dev` runs a
+standalone Vite dev server for iterating on the UI in isolation.
 
 First approach is with Console views called from terminal.
 
