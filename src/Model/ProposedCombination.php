@@ -1,6 +1,10 @@
 <?php
 
-use Level\LevelInterface;
+namespace App\Model;
+
+use Combination;
+use App\Model\Level\LevelInterface;
+
 include_once('Combination.php');
 
 class ProposedCombination extends Combination

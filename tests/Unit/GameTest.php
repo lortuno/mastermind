@@ -1,7 +1,10 @@
 <?php
 
+use App\Model\InvalidCombinationError;
+use App\Model\Result;
+use App\Model\SecretCombination;
 use PHPUnit\Framework\TestCase;
-use Level\Easy;
+use App\Model\Level\Easy;
 
 include_once 'src/Model/Result.php';
 include_once 'src/Model/Level/Easy.php';

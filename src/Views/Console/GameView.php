@@ -3,7 +3,7 @@
 namespace App\Views\Console;
 
 use Game;
-use InvalidCombinationError;
+use App\Model\InvalidCombinationError;
 use Exception;
 
 include_once('ErrorView.php');

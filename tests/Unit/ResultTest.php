@@ -1,9 +1,12 @@
 <?php
 
+use App\Model\InvalidCombinationError;
+use App\Model\ProposedCombination;
+use App\Model\Result;
 use PHPUnit\Framework\TestCase;
-use Level\Medium;
-use Level\Hard;
-use Level\Easy;
+use App\Model\Level\Medium;
+use App\Model\Level\Hard;
+use App\Model\Level\Easy;
 
 include_once 'src/Model/Result.php';
 include_once 'src/Model/Level/Medium.php';

@@ -1,6 +1,6 @@
 <?php
 
-namespace Level;
+namespace App\Model\Level;
 
 include_once ('LevelInterface.php');
 

@@ -1,6 +1,8 @@
 <?php
 
-namespace Level;
+namespace App\Model\Level;
+
+use App\Model\Level\BaseLevel;
 
 include_once ('BaseLevel.php');
 

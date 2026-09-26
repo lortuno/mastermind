@@ -1,10 +1,11 @@
 <?php
 
-use Level\Easy;
-use Level\Medium;
-use Level\Hard;
-use Level\BaseLevel;
-use Level\LevelInterface;
+use App\Model\InvalidCombinationError;
+use App\Model\Level\Easy;
+use App\Model\Level\Medium;
+use App\Model\Level\Hard;
+use App\Model\Level\BaseLevel;
+use App\Model\Level\LevelInterface;
 
 include_once ('Level/LevelInterface.php');
 include_once ('Level/Easy.php');

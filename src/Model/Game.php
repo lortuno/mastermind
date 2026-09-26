@@ -1,6 +1,10 @@
 <?php
 
-use Level\LevelInterface;
+use App\Model\InvalidCombinationError;
+use App\Model\ProposedCombination;
+use App\Model\Result;
+use App\Model\SecretCombination;
+use App\Model\Level\LevelInterface;
 include_once('ProposedCombination.php');
 include_once('SecretCombination.php');
 include_once('InvalidCombinationError.php');

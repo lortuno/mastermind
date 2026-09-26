@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Model;
 class Type
 {
     public array $validValues = [

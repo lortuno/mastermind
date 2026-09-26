@@ -1,6 +1,10 @@
 <?php
 
-use Level\LevelInterface;
+namespace App\Model;
+
+use Combination;
+use App\Model\Level\LevelInterface;
+use App\Model\Type;
 
 include_once('Combination.php');
 include_once('Type.php');

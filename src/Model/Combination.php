@@ -1,6 +1,8 @@
 <?php
 
-use Level\LevelInterface;
+use App\Model\InvalidCombinationError;
+use App\Model\Type;
+use App\Model\Level\LevelInterface;
 
 include_once('InvalidCombinationError.php');
 

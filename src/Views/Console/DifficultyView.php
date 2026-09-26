@@ -3,8 +3,8 @@
 namespace App\Views\Console;
 
 use Difficulty;
-use InvalidCombinationError;
-use Level\LevelInterface;
+use App\Model\InvalidCombinationError;
+use App\Model\Level\LevelInterface;
 use Throwable;
 
 class DifficultyView

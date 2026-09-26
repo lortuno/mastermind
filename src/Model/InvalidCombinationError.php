@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Model;
+use Exception;
+
 class InvalidCombinationError extends Exception
 {
     public function __construct(?string $message = null, Throwable $previous = null)
