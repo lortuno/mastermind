@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@mastermind/core": "*",
     "expo": "~57.0.25",
     "expo-build-properties": "~57.0.22",
     "expo-status-bar": "~57.0.1",

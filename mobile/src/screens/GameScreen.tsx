@@ -1,6 +1,6 @@
+import { useMastermindGame, type GameApi } from '@mastermind/core';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { GameApi } from '../api/gameApi';
 import Button from '../components/Button';
 import ColorPalette from '../components/ColorPalette';
 import DifficultySelect from '../components/DifficultySelect';
@@ -9,7 +9,6 @@ import GameHeader from '../components/GameHeader';
 import GameStatusBanner from '../components/GameStatusBanner';
 import GuessBoard from '../components/GuessBoard';
 import GuessHistory from '../components/GuessHistory';
-import { useMastermindGame } from '../hooks/useMastermindGame';
 import { RAISED_SHADOW, fontSize, palette, radius, spacing } from '../theme';
 
 type Props = {

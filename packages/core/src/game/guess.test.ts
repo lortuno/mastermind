@@ -1,4 +1,5 @@
-import { emptyGuess, isGuessComplete, placeColor } from '../guess';
+import { describe, expect, it } from 'vitest';
+import { emptyGuess, isGuessComplete, placeColor } from './guess';
 
 describe('emptyGuess', () => {
   it('creates one empty slot per board position', () => {

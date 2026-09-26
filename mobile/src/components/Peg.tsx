@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { findColor } from '../game/colors';
+import { findColor } from '@mastermind/core';
 import { palette } from '../theme';
 
 type Props = {

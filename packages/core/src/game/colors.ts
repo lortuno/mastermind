@@ -1,5 +1,5 @@
-// Mirrors App\Model\Type::$validValues (src/Model/Type.php) and
-// web/src/constants/colors.js. Keep in sync if the valid color set changes.
+// Mirrors App\Model\Type::$validValues (src/Model/Type.php).
+// Keep in sync if the valid color set ever changes on the PHP side.
 export type ColorLetter = 'R' | 'G' | 'B' | 'P' | 'Y';
 
 export type PegColor = {
@@ -20,4 +20,10 @@ export const COLORS: readonly PegColor[] = [
 
 export function findColor(letter: string | null): PegColor | null {
   return COLORS.find((color) => color.letter === letter) ?? null;
+}
+
+/** "RGB" or ['R', 'G', 'B'] → "Red, Green, Blue" (unknown letters kept as-is). */
+export function describeCombination(letters: string | readonly string[]): string {
+  const list = typeof letters === 'string' ? letters.split('') : letters;
+  return list.map((letter) => findColor(letter)?.name ?? letter).join(', ');
 }

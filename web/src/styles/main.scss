@@ -214,9 +214,14 @@ button {
   }
 
   @media (hover: hover) {
-    &:hover {
+    &:hover:not(:disabled) {
       border-color: $color-accent;
     }
+  }
+
+  // Locked while a guess is in flight or the game is over.
+  &:disabled {
+    cursor: not-allowed;
   }
 }
 
@@ -242,15 +247,20 @@ button {
   transition: transform $duration-fast ease, box-shadow $duration-fast ease;
 
   @media (hover: hover) {
-    &:hover {
+    &:hover:not(:disabled) {
       transform: translateY(-2px);
       box-shadow: 0 6px 0 $shadow-lip;
     }
   }
 
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(3px);
     box-shadow: 0 1px 0 $shadow-lip;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
   }
 }
 

@@ -9,13 +9,15 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@mastermind/core": "*",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@vitejs/plugin-react": "^4.3.1",
     "jsdom": "^30.1.1",
     "sass": "^1.77.8",

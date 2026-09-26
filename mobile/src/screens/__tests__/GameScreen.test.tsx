@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
 import { AccessibilityInfo } from 'react-native';
-import { ApiError, type GameApi } from '../../api/gameApi';
-import type { Difficulty, GameState } from '../../api/types';
+import { ApiError, type Difficulty, type GameApi, type GameState } from '@mastermind/core';
 import GameScreen from '../GameScreen';
 
 const DIFFICULTIES: Difficulty[] = [

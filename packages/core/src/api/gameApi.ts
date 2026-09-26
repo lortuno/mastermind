@@ -13,11 +13,13 @@ export class ApiError extends Error {
   readonly name = 'ApiError';
 
   // HTTP status of the failed response; null when the server was never reached.
-  constructor(
-    message: string,
-    readonly status: number | null,
-  ) {
+  readonly status: number | null;
+
+  // A plain field instead of a parameter property keeps this file runnable by
+  // Node's built-in type stripping (no TypeScript-only emit).
+  constructor(message: string, status: number | null) {
     super(message);
+    this.status = status;
   }
 }
 
@@ -26,6 +28,10 @@ type RequestOptions = {
   body?: Record<string, unknown>;
 };
 
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function errorMessageFrom(data: unknown): string {
   if (typeof data === 'object' && data !== null && 'error' in data && typeof data.error === 'string') {
     return data.error;
@@ -33,7 +39,22 @@ function errorMessageFrom(data: unknown): string {
   return 'Unexpected error.';
 }
 
-export function createGameApi(baseUrl: string, fetchImpl: typeof fetch = fetch): GameApi {
+export type GameApiOptions = {
+  fetchImpl?: typeof fetch;
+  // Appended to network/timeout errors, e.g. where to fix the server address.
+  connectionHint?: string;
+};
+
+/**
+ * @param baseUrl Server origin such as "http://192.168.1.20", or "" for
+ *   same-origin requests (the web client served by the PHP app).
+ */
+export function createGameApi(
+  baseUrl: string,
+  { fetchImpl = fetch, connectionHint = 'Check your connection.' }: GameApiOptions = {},
+): GameApi {
+  const serverName = baseUrl ? `the game server at ${baseUrl}` : 'the game server';
+
   async function request<T>(action: string, { method = 'GET', body }: RequestOptions = {}): Promise<T> {
     // A host that silently drops packets (e.g. a firewall) would otherwise hang
     // for the OS default (~60 s on iOS) with only a spinner on screen.
@@ -44,18 +65,19 @@ export function createGameApi(baseUrl: string, fetchImpl: typeof fetch = fetch):
     try {
       response = await fetchImpl(`${baseUrl}/index.php?action=${action}`, {
         method,
-        // Native cookie stores (NSHTTPCookieStorage / OkHttp) keep PHPSESSID.
+        // Sends PHPSESSID: the browser cookie jar on web, native cookie
+        // stores (NSHTTPCookieStorage / OkHttp) on mobile.
         credentials: 'include',
         headers: body ? { 'Content-Type': 'application/json' } : undefined,
         body: body ? JSON.stringify(body) : undefined,
         signal: controller.signal,
       });
     } catch {
-      // Naming the URL lets the player tell a wrong EXPO_PUBLIC_API_URL from a blocked port.
+      // Naming the URL lets the player tell a wrong server address from a blocked port.
       const reason = controller.signal.aborted
-        ? `The game server at ${baseUrl} did not respond within ${REQUEST_TIMEOUT_MS / 1000} seconds.`
-        : `Could not reach the game server at ${baseUrl}.`;
-      throw new ApiError(`${reason} Check your connection, firewall and EXPO_PUBLIC_API_URL.`, null);
+        ? `${capitalize(serverName)} did not respond within ${REQUEST_TIMEOUT_MS / 1000} seconds.`
+        : `Could not reach ${serverName}.`;
+      throw new ApiError(`${reason} ${connectionHint}`, null);
     } finally {
       clearTimeout(timeoutId);
     }

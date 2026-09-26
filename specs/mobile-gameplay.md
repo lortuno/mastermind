@@ -84,41 +84,40 @@ validation, or difficulty rules.
 - No web target for the Expo project (the React web app in `web/`
   already covers browsers); running it on web would additionally need
   CORS on the PHP API.
-- No shared code package between `web/` and `mobile/` — the two clients
-  are small and duplicate only the color table and a few helpers.
+- No shared visual components with `web/`: logic, the game-flow hook and
+  design tokens come from [[shared-client-core]]; the React Native UI is
+  mobile-only.
 
 ## Design Notes
 
 - **Stack**: Expo SDK 57 (managed workflow), React Native, TypeScript
-  (strict). Lives in `mobile/`, a sibling of `web/`, with its own
-  `package.json`; the PHP PSR-4 root and `web/` are untouched.
+  (strict). Lives in `mobile/`, an npm workspace next to `web/` and
+  `packages/core` (install from the repository root); Expo's monorepo
+  support lets Metro compile `@mastermind/core` from source.
 - **Why Expo**: the React Native docs recommend a framework; Expo gives
   one codebase for iOS and Android, runs on physical devices via Expo Go
   without Xcode/Android Studio, and needs no native code for this app.
 - **Structure**:
-  - `src/api/gameApi.ts` — typed wrapper over the four actions
-    (`fetchDifficulties`, `fetchState`, `startGame`, `submitGuess`);
-    throws `ApiError(message, status)` — `body.error` plus the HTTP status
-    on non-2xx, `status: null` on network failures — so callers can tell
-    "no active game" (400 from `state`) apart from real outages. `credentials: 'include'` so the PHP session
-    cookie is sent.
+  - From `@mastermind/core` ([[shared-client-core]]): `createGameApi` /
+    `ApiError` (four actions, session cookie, 10 s timeout, errors that
+    name the URL), wire types, `COLORS` / `findColor` /
+    `describeCombination`, guess helpers, the `useMastermindGame` phase
+    state machine (`loading → difficulty → playing → finished`), and the
+    design `tokens`.
+  - `App.tsx` — builds the API from `EXPO_PUBLIC_API_URL` with a
+    mobile-specific `connectionHint` ("Check your connection, firewall
+    and EXPO_PUBLIC_API_URL."), then `SafeAreaProvider` + `GameScreen`.
   - `src/api/config.ts` — resolves the base URL from
     `EXPO_PUBLIC_API_URL`, stripping a trailing slash. Android emulators
     reach the host machine at `http://10.0.2.2`, the iOS simulator at
     `http://localhost`, physical devices at the host's LAN IP.
-  - `src/game/guess.ts` — pure, immutable helpers (`emptyGuess`,
-    `placeColor`, `isGuessComplete`) mirroring the web picker rules.
-  - `src/game/colors.ts` — mirrors `App\Model\Type::$validValues`, same
-    hex values as `web/src/constants/colors.js`.
-  - `src/hooks/useMastermindGame.ts` — the phase state machine
-    (`loading → difficulty → playing → finished`) and all API calls.
+  - `src/screens/GameScreen.tsx` — composes the components from the hook.
   - `src/components/*` — presentational components: `DifficultySelect`,
     `GameHeader`, `GuessBoard`, `ColorPalette`, `GuessHistory`, `KeyPegs`,
     `Peg`, `GameStatusBanner`, `ErrorNotice`, `Button`.
-  - `src/theme.ts` — design tokens, value-for-value mirror of
-    `web/src/styles/_variables.scss` (see "Visual design").
-  - `App.tsx` — `SafeAreaProvider` + a `ScrollView` screen composing the
-    above from the hook.
+  - `src/theme.ts` — React Native view of the shared `tokens` (no values
+    of its own).
+  - `src/hooks/useIosAnnouncement.ts` — VoiceOver announcements.
 - **Visual design** (shared with [[web-gameplay-integration]]): a dark
   "tabletop board". Tokens, identical in both clients: palette `bg`
   `#12151c`, `surface` `#1c202b`, `surfaceRaised` `#242938`,
@@ -164,16 +163,15 @@ validation, or difficulty rules.
   `npx expo start`; phone and computer share a Wi-Fi network and
   `EXPO_PUBLIC_API_URL` is the computer's LAN IP. Step-by-step guide and
   troubleshooting live in the root `README.md` ("Testing on a real phone").
-- **Tests**: `jest-expo` + `@testing-library/react-native`. Unit tests
-  for `guess.ts`, `config.ts`, and `gameApi.ts` (mocked `fetch`); an
-  integration test that renders `App` with a mocked API and walks the
+- **Tests**: `jest-expo` + `@testing-library/react-native`. `config.ts`
+  unit tests (API client, guess rules and hook are tested in
+  [[shared-client-core]]); an integration test that renders `GameScreen`
+  with a mocked API and walks the
   difficulty → guess → finish flow, including newest-first order and the
   single "Latest" marker after resume and after a submit.
 
 ## Open Questions
 
-- Should the mobile and web clients share the color table / guess helpers
-  through a workspace package once they diverge less trivially?
 - Should production builds point at a hosted HTTPS backend, and if so,
   should the PHP session cookie be marked `Secure`/`SameSite`?
 
@@ -201,3 +199,10 @@ validation, or difficulty rules.
   marked (Requirement 9a); visual redesign shared with the web client
   (see [[web-gameplay-integration]]). The API still returns history oldest
   first; each client reverses it for display.
+- 2026-09-26: API client, wire types, colors, guess rules, the
+  `useMastermindGame` hook and design tokens moved to
+  [[shared-client-core]] (`@mastermind/core`, npm workspaces); `theme.ts`
+  now reads the shared tokens. No behavior change; the network-error hint
+  is passed in from `App.tsx`. Verified: 22 mobile tests (the moved tests
+  now run in core), `tsc`, ESLint, `expo-doctor`, iOS/Android export, and
+  a live run of the shared client against the dockerized backend.

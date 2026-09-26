@@ -1,0 +1,18 @@
+{
+  "name": "mastermind-clients",
+  "private": true,
+  "description": "npm workspaces for the Mastermind JavaScript clients (the PHP backend is managed by Composer).",
+  "workspaces": [
+    "packages/*",
+    "web",
+    "mobile"
+  ],
+  "overrides": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "scripts": {
+    "test": "npm test --workspaces --if-present",
+    "tokens": "npm run tokens -w @mastermind/core"
+  }
+}

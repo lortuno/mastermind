@@ -54,6 +54,16 @@ validation, or difficulty rules are reimplemented in JavaScript.
    parameters are computed exclusively by the existing `App\Model\*`
    classes (`Game`, `Result`, `Difficulty`, `Combination` family, `Type`);
    none of that logic is duplicated in JavaScript.
+10. WHEN a guess or game start is in flight, or the game is finished THEN
+    the slots, color palette, and "Clear" are disabled (so the response
+    cannot silently wipe new input), and "Submit guess" is disabled.
+11. WHEN a request fails THEN its message is shown in a `role="alert"`
+    notice: a server `{error}` message, "Could not reach the game server."
+    on a network failure, or "…did not respond within 10 seconds." when no
+    response arrives in time. HTTP 400 from `state` on page load means "no
+    game in the session" and is not shown. WHEN the page-load requests
+    failed and there are no difficulties to show THEN a "Retry" button
+    re-runs them.
 
 ## Non-Goals
 
@@ -143,11 +153,15 @@ validation, or difficulty rules are reimplemented in JavaScript.
   `__sleep`/`__wakeup`. The attempt history itself is **not** stored on
   `Game` (it only remembers `lastResult`) — it's assembled by the
   controller across requests, entirely additive and outside `Model/`.
-- **Frontend**: `web/src/api/gameApi.js` wraps the four calls
-  (`fetch` with same-origin credentials, JSON in/out). `App.jsx` becomes a
-  small phase state machine (`loading -> difficulty -> playing ->
-  finished`); on mount it calls both `difficulties` and `state` so a page
-  reload mid-game resumes instead of restarting. Board width now comes
+- **Frontend**: the API client, wire types, colors, guess rules and the
+  game-flow hook come from [[shared-client-core]] (`@mastermind/core`),
+  shared with the mobile client. `main.jsx` creates the client with an
+  empty base URL (same-origin `/index.php`) and passes it to `App`, which
+  renders from `useMastermindGame(api)` (phases `loading -> difficulty ->
+  playing -> finished`); on mount the hook calls both `difficulties` and
+  `state` so a page reload mid-game resumes instead of restarting. Adopting
+  the shared hook brought Requirements 10–11 (board lock, timeout, Retry,
+  errors other than "no game" surfaced on load). Board width now comes
   from the server response instead of the fixed constant from
   [[web-guess-picker]] (which is removed). New components:
   `DifficultySelect` (one button per level, showing name/width/max
@@ -164,8 +178,9 @@ validation, or difficulty rules are reimplemented in JavaScript.
   explicit "N right position" / "N right color, wrong position" text stays
   visible, so meaning never depends on color.
 - **Visual design** (shared with [[mobile-gameplay]]): a dark "tabletop
-  board". Tokens live in `web/src/styles/_variables.scss` and must match
-  `mobile/src/theme.ts` value for value (rem = px / 16): palette as
+  board". `web/src/styles/_variables.scss` is generated from the shared
+  tokens in `packages/core/src/tokens.ts` (`npm run tokens`, rem = px / 16;
+  `styles/tokens.test.js` fails if the file drifts): palette as
   before plus `surface-raised` `#242938`, `surface-sunken` `#0d1016`,
   `border-strong` `#3b4254`, `on-accent` `#12151c`; spacing 2/4/8/12/16/
   24/32px; radius 6/12/18px/pill; type 12/14/16/20/32px.
@@ -186,13 +201,14 @@ validation, or difficulty rules are reimplemented in JavaScript.
     `[...history].reverse()`; rows keyed by `attempt`. Pegs are grouped as
     `role="img"` with labels like "Attempt 3: Red, …" and "Secret
     combination: …".
-  - Peg letters use each color's `textHex` from
-    `web/src/constants/colors.js` (>= 4.5:1, same as mobile); primary
+  - Peg letters use each color's shared `textHex` (>= 4.5:1, same as
+    mobile); slots and swatches show `not-allowed` while locked; primary
     buttons use dark text on the accent (white on it was 3.2:1).
 - **Frontend tests**: Vitest + Testing Library (jsdom, config in
-  `web/vite.config.js`, `npm test` in `web/`) cover `GuessHistory` order,
-  the single "Latest" marker, no mutation of the prop, and the
-  `GameHeader` progressbar.
+  `web/vite.config.js`, `npm test -w web`) cover `GuessHistory` order,
+  the single "Latest" marker, no mutation of the prop, the `GameHeader`
+  progressbar, `App` flows with a fake API (start, board lock while
+  submitting, rejected guess, Retry, finished game), and token drift.
 - **Reuse discipline**: `src/Model/*` is not modified by this feature —
   every rule (color validity, combination length, scoring, win/loss,
   attempt limits) is read through existing public methods.
@@ -227,3 +243,10 @@ validation, or difficulty rules are reimplemented in JavaScript.
 - 2026-09-26: Attempt log reversed to newest first, with the latest attempt
   marked (Requirement 3); visual redesign shared with the mobile client
   (see [[mobile-gameplay]]). No API change.
+- 2026-09-26: Frontend now uses [[shared-client-core]] (`@mastermind/core`)
+  for the API client, colors, guess rules, game-flow hook and design tokens
+  (`_variables.scss` is generated); `web/src/api/gameApi.js` and
+  `web/src/constants/colors.js` removed; React 18 → 19.2.3 to share one
+  React with mobile. New behavior from the shared hook: Requirements
+  10–11. Verified with 14 Vitest tests, `vite build`, and the page and
+  bundle served by the dockerized backend.

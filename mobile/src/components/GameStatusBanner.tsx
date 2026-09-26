@@ -1,5 +1,5 @@
+import { describeCombination } from '@mastermind/core';
 import { StyleSheet, Text, View } from 'react-native';
-import { findColor } from '../game/colors';
 import { useIosAnnouncement } from '../hooks/useIosAnnouncement';
 import { RAISED_SHADOW, fontSize, palette, radius, spacing } from '../theme';
 import Button from './Button';
@@ -15,7 +15,7 @@ type Props = {
 const SECRET_PEG_SIZE = 36;
 
 export default function GameStatusBanner({ isWinner, secretCombination, onPlayAgain }: Props) {
-  const secretLabel = secretCombination.map((letter) => findColor(letter)?.name ?? letter).join(', ');
+  const secretLabel = describeCombination(secretCombination);
   const outcome = isWinner ? 'You win!' : 'You lose.';
   const tagline = isWinner ? 'Code cracked' : 'Out of attempts';
   useIosAnnouncement(`${outcome} The secret combination was ${secretLabel}.`);

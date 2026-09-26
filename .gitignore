@@ -20,6 +20,8 @@
 /logs/nginx/
 .claude/*
 
+# JavaScript clients (npm workspaces: packages/*, web, mobile)
+node_modules/
+
 # Web frontend (React/Sass build)
-/web/node_modules/
 /public/assets/

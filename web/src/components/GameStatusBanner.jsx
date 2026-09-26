@@ -1,5 +1,5 @@
 import React from 'react';
-import { describeCombination } from '../constants/colors.js';
+import { describeCombination } from '@mastermind/core';
 import Peg from './Peg.jsx';
 
 export default function GameStatusBanner({ isWinner, secretCombination, onPlayAgain }) {

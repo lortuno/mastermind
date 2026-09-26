@@ -1,6 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { findColor } from '../game/colors';
-import type { Guess } from '../game/guess';
+import { findColor, type Guess } from '@mastermind/core';
 import { MIN_TOUCH_TARGET, PEG_MAX_SIZE, fontSize, palette, radius, spacing } from '../theme';
 
 type Props = {

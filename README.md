@@ -29,36 +29,45 @@ To access the docker container:
 ``
 docker compose exec php-fpm sh
 ``
-Note: There is a combination of use statements and include to show php native can work with the code. 
+Note: There is a combination of use statements and include to show php native can work with the code.
 
 You can browse to http://localhost:80 to see the web view, or run the console version from terminal.
 If you include an alias in `/etc/hosts` you can use that to access the web view.
+
+The JavaScript clients are npm workspaces: `web/` (browser), `mobile/`
+(iOS/Android) and `packages/core/` — the shared, render-free code both use
+(API client, game rules, the game-flow React hook and the design tokens;
+see `specs/shared-client-core.md`). Install everything once, **from the
+repository root**:
+```
+npm install
+```
+Run `npm test` at the root to test all three. After changing the design
+tokens in `packages/core/src/tokens.ts`, run `npm run tokens` to regenerate
+`web/src/styles/_variables.scss` (a web test fails if you forget).
 
 The web view (`public/index.php`) is a React + Sass single-page app. Its
 source lives in `web/`; the docroot (`public/`) only serves the compiled
 output plus the front controller — build it once before browsing:
 ```
-cd web
-npm install
-npm run build
+npm run build -w web
 ```
 This writes `public/assets/mastermind-web.{js,css}`, gitignored, rebuild
-after any change under `web/src/`. `npm --prefix web run dev` runs a
-standalone Vite dev server for iterating on the UI in isolation.
+after any change under `web/src/` or `packages/core/`. `npm run dev -w web`
+runs a standalone Vite dev server for iterating on the UI in isolation.
 
 The mobile view (iOS and Android) is a React Native app built with Expo.
 Its source lives in `mobile/` and it talks to the same PHP JSON API, so
 start the backend first (`docker compose up -d`). Then:
 ```
 cd mobile
-npm install
 cp .env.example .env.local   # set EXPO_PUBLIC_API_URL for your device
 npx expo start
 ```
 The backend URL depends on where the app runs: `http://10.0.2.2` (Android
 emulator), `http://localhost` (iOS simulator), or your computer's LAN IP
-(physical phone). Checks: `npm test`, `npm run typecheck`, `npm run lint`.
-See `specs/mobile-gameplay.md` for the feature spec.
+(physical phone). Checks (in `mobile/`): `npm test`, `npm run typecheck`,
+`npm run lint`. See `specs/mobile-gameplay.md` for the feature spec.
 
 ### Testing on a real phone (iOS or Android)
 

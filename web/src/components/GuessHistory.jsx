@@ -1,5 +1,5 @@
 import React from 'react';
-import { describeCombination } from '../constants/colors.js';
+import { describeCombination } from '@mastermind/core';
 import KeyPegs from './KeyPegs.jsx';
 import Peg from './Peg.jsx';
 

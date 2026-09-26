@@ -1,6 +1,5 @@
+import { describeCombination, type Attempt } from '@mastermind/core';
 import { StyleSheet, Text, View } from 'react-native';
-import type { Attempt } from '../api/types';
-import { findColor } from '../game/colors';
 import { HISTORY_PEG_SIZE, RAISED_SHADOW, fontSize, palette, radius, spacing } from '../theme';
 import KeyPegs from './KeyPegs';
 import Peg from './Peg';
@@ -14,13 +13,6 @@ type RowProps = {
   entry: Attempt;
   isLatest: boolean;
 };
-
-function describeCombination(combination: string): string {
-  return combination
-    .split('')
-    .map((letter) => findColor(letter)?.name ?? letter)
-    .join(', ');
-}
 
 function AttemptRow({ entry, isLatest }: RowProps) {
   const letters = entry.combination.split('');

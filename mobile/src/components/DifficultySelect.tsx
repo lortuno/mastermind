@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import type { Difficulty } from '../api/types';
+import type { Difficulty } from '@mastermind/core';
 import { MIN_TOUCH_TARGET, RAISED_SHADOW, fontSize, palette, radius, spacing } from '../theme';
 
 type Props = {

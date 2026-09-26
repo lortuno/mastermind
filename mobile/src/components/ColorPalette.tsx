@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { COLORS, type ColorLetter } from '../game/colors';
+import { COLORS, type ColorLetter } from '@mastermind/core';
 import { MIN_TOUCH_TARGET, PEG_MAX_SIZE, fontSize, radius, spacing } from '../theme';
 
 type Props = {

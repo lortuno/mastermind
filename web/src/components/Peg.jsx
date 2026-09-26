@@ -1,5 +1,5 @@
 import React from 'react';
-import { findColor } from '../constants/colors.js';
+import { findColor } from '@mastermind/core';
 
 // Read-only peg used in the attempt log and the secret reveal; the parent
 // group supplies the accessible description.
